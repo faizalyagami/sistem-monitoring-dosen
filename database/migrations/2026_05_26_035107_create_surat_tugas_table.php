@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('surat_tugas', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('dosen_id')->constrained('dosens')->onDelete('cascade');
-            $table->foreignId('academic_period_id')->constrained('academic_periods')->onDelete('cascade');
+            $table->unsignedBigInteger('dosen_id');
+            $table->unsignedBigInteger('academic_period_id');
             $table->string('nama_surat_tugas');
             $table->string('no_surat_tugas')->unique();
             $table->text('perihal')->nullable();

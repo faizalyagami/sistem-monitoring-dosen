@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('pengajaran', function (Blueprint $table) {
@@ -21,15 +18,19 @@ return new class extends Migration
             $table->integer('jumlah_mahasiswa');
             $table->enum('semester', ['ganjil', 'genap']);
             $table->year('tahun_akademik');
-            $table->foreignId('dosen_id')->constrained('dosens')->onDelete('cascade');
-            $table->foreignId('academic_period_id')->constrained('academic_periods')->onDelete('cascade');
+
+            // Tanpa foreign key
+            $table->unsignedBigInteger('dosen_id');
+            $table->unsignedBigInteger('academic_period_id');
+
             $table->timestamps();
+
+            // Index untuk join
+            $table->index('dosen_id');
+            $table->index('academic_period_id');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('pengajaran');

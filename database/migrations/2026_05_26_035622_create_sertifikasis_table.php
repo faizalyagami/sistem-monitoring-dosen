@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('sertifikasis', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('dosen_id')->constrained('dosens')->onDelete('cascade');
-            $table->foreignId('academic_period_id')->constrained('academic_periods')->onDelete('cascade');
+            $table->unsignedBigInteger('dosen_id');
+            $table->unsignedBigInteger('academic_period_id');
             $table->string('jenis_sertifikasi');
             $table->string('lembaga_sertifikasi');
             $table->string('nomor_sertifikasi')->unique();

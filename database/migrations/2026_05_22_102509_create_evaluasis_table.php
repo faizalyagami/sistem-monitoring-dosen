@@ -6,15 +6,14 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('evaluasis', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('dosen_id')->constrained()->onDelete('cascade');
-            $table->foreignId('academic_period_id')->constrained('academic_periods')->onDelete('cascade');
+
+            $table->unsignedBigInteger('dosen_id');
+            $table->unsignedBigInteger('academic_period_id');
+
             $table->string('jenis_evaluasi');
             $table->string('kategori_evaluasi');
             $table->string('nama_evaluasi');
@@ -23,12 +22,13 @@ return new class extends Migration
             $table->text('komentar')->nullable();
             $table->year('tahun');
             $table->timestamps();
+
+            // Index untuk performa query
+            $table->index('dosen_id');
+            $table->index('academic_period_id');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('evaluasis');
