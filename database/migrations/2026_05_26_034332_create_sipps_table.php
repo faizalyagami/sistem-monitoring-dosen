@@ -6,25 +6,23 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('table_sipps', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('dosen_id')->constrained('dosens')->onDelete('cascade');
+
+            $table->unsignedBigInteger('dosen_id');
+
             $table->string('no_registrasi');
             $table->string('bidang_keilmuan');
             $table->year('tahun_terbit');
             $table->enum('status', ['aktif', 'tidak_aktif'])->default('aktif');
             $table->timestamps();
+
+            $table->index('dosen_id');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('table_sipps');

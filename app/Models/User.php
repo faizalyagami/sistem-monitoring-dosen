@@ -2,21 +2,14 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'name',
         'email',
@@ -26,82 +19,66 @@ class User extends Authenticatable
         'dosen_id',
         'last_login_at',
         'last_login_ip',
-        'two_factor_secret',
-        'two_factor_recovery_codes',
-        'two_factor_confirmed_at',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
-        'two_factor_secret',
-        'two_factor_recovery_codes',
+    ];
+
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'last_login_at' => 'datetime',
     ];
 
     /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
+     * Relasi ke Dosen (tanpa foreign key constraint di database)
+     * Laravel tetap bisa melakukan join
      */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-        'password' => 'hashed',
-        'last_login_at' => 'datetime',
-        'two_factor_confirmed_at' => 'datetime',
-    ];
-
     public function dosen()
     {
-        return $this->belongsTo(Dosen::class);
+        return $this->belongsTo(Dosen::class, 'dosen_id', 'id');
     }
 
-    public function activityLogs()
+    /**
+     * Cek role
+     */
+    public function isAdmin(): bool
     {
-        return $this->hasMany(ActivityLog::class);
+        return $this->role === 'admin';
+    }
+
+    public function isDosen(): bool
+    {
+        return $this->role === 'dosen';
+    }
+
+    /**
+     * Ambil data dosen dengan aman
+     */
+    public function getDataDosen()
+    {
+        if ($this->isDosen() && $this->dosen_id) {
+            return $this->dosen;
+        }
+        return null;
+    }
+
+    /**
+     * Scope untuk filter role
+     */
+    public function scopeAdmin($query)
+    {
+        return $query->where('role', 'admin');
+    }
+
+    public function scopeDosen($query)
+    {
+        return $query->where('role', 'dosen');
     }
 
     public function scopeActive($query)
     {
         return $query->where('status', 'active');
-    }
-
-    public function scopeRole($query, $role)
-    {
-        return $query->where('role', $role);
-    }
-
-    public function isSuperAdmin(): bool
-    {
-        return $this->role === 'superadmin';
-    }
-
-    public function isAdmin(): bool
-    {
-        return in_array($this->role, ['superadmin', 'admin']);
-    }
-
-    public function isOperator(): bool
-    {
-        return $this->role === 'operator';
-    }
-
-    public function isViewer(): bool
-    {
-        return $this->role === 'viewer';
-    }
-
-    public function canEdit(): bool
-    {
-        return in_array($this->role, ['superadmin', 'admin', 'operator']);
-    }
-
-    public function canDelete(): bool
-    {
-        return in_array($this->role, ['superadmin', 'admin']);
     }
 }
