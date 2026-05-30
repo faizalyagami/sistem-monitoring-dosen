@@ -7,6 +7,7 @@ use App\Models\Dosen;
 use App\Models\Pengajaran;
 use App\Models\Riset;
 use App\Models\Pkm;
+use App\Models\Bimbingan;
 use App\Models\AcademicPeriod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -16,7 +17,7 @@ class DashboardController extends Controller
     public function index()
     {
         // Get current active period
-        $currentPeriod = AcademicPeriod::current()->first();
+        $currentPeriod = AcademicPeriod::where('is_active', true)->first();
 
         // Stats
         $stats = [
@@ -24,6 +25,7 @@ class DashboardController extends Controller
             'total_pengajaran' => Pengajaran::count(),
             'total_riset' => Riset::count(),
             'total_pkm' => Pkm::count(),
+            'total_bimbingan' => Bimbingan::count(),
         ];
 
         // Teaching distribution by field
@@ -48,10 +50,21 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
 
+        // Recent PKM
+        $recentPkms = Pkm::with('dosen')
+            ->orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get();
+
         // Chart data for SKS distribution
         $sksDistribution = Pengajaran::select('sks', DB::raw('count(*) as total'))
             ->groupBy('sks')
             ->orderBy('sks')
+            ->get();
+
+        // Dosen status distribution
+        $dosenStatus = Dosen::select('status', DB::raw('count(*) as total'))
+            ->groupBy('status')
             ->get();
 
         return view('admin.dashboard', compact(
@@ -60,8 +73,10 @@ class DashboardController extends Controller
             'researchByStatus',
             'topLecturers',
             'recentRisets',
+            'recentPkms',
             'sksDistribution',
-            'currentPeriod'
+            'currentPeriod',
+            'dosenStatus'
         ));
     }
 }

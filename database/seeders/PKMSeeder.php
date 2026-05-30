@@ -2,21 +2,29 @@
 
 namespace Database\Seeders;
 
-use App\Models\Pkm;
 use App\Models\Dosen;
 use App\Models\AcademicPeriod;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class PkmSeeder extends Seeder
 {
     public function run(): void
     {
+        // Ambil data dosen dan periode akademik
         $dosens = Dosen::all();
-        $periods = AcademicPeriod::all();
+        $activePeriod = AcademicPeriod::where('is_active', true)->first();
+        $closedPeriods = AcademicPeriod::where('is_closed', true)->take(2)->get();
+
+        if ($dosens->isEmpty()) {
+            $this->command->info('Tidak ada data dosen, lewati seeding PKM');
+            return;
+        }
 
         $pkms = [];
 
-        $juduls = [
+        // Data PKM
+        $judulPkm = [
             'Pelatihan Digital Marketing untuk UMKM',
             'Sosialisasi Bahaya Narkoba di Kalangan Remaja',
             'Pemberdayaan Masyarakat melalui Bank Sampah',
@@ -27,60 +35,72 @@ class PkmSeeder extends Seeder
             'Sosialisasi Literasi Keuangan',
             'Pendampingan Legalitas Usaha UMKM',
             'Pelatihan English for Tourism',
+            'Program Kampus Mengajar',
+            'Kuliah Kerja Nyata Tematik',
         ];
 
-        $bidangs = ['Ekonomi', 'Pendidikan', 'Kesehatan', 'Lingkungan', 'Teknologi'];
-        $jenis = ['Pengabdian', 'Pelatihan', 'Penyuluhan', 'Pendampingan'];
-        $lokasis = ['Jakarta', 'Bandung', 'Surabaya', 'Medan', 'Semarang', 'Yogyakarta'];
-        $sumber_dana = ['DIKTI', 'LPPM', 'CSR Perusahaan', 'Internal'];
+        $bidang = ['Ekonomi', 'Pendidikan', 'Kesehatan', 'Lingkungan', 'Teknologi', 'Sosial'];
+        $jenis = ['Pengabdian', 'Pelatihan', 'Penyuluhan', 'Pendampingan', 'Konsultasi'];
+        $lokasi = ['Jakarta', 'Bandung', 'Surabaya', 'Medan', 'Semarang', 'Yogyakarta', 'Malang', 'Makassar'];
+        $sumberDana = ['DIKTI', 'LPPM', 'CSR Perusahaan', 'Internal Universitas', 'Pemerintah Daerah'];
 
-        // PKM untuk periode aktif
-        $activePeriod = $periods->where('is_active', true)->first();
-
-        foreach ($dosens as $dosen) {
-            $jumlahPkm = rand(1, 2);
-            for ($i = 0; $i < $jumlahPkm; $i++) {
-                $pkms[] = [
-                    'dosen_id' => $dosen->id,
-                    'academic_period_id' => $activePeriod->id,
-                    'judul_pkm' => $juduls[array_rand($juduls)] . ' ' . ($i + 1),
-                    'bidang_pkm' => $bidangs[array_rand($bidangs)],
-                    'jenis_pkm' => $jenis[array_rand($jenis)],
-                    'sumber_dana' => $sumber_dana[array_rand($sumber_dana)],
-                    'jumlah_dana' => rand(2000000, 20000000),
-                    'lokasi_kegiatan' => $lokasis[array_rand($lokasis)],
-                    'status' => 'aktif',
-                    'tahun' => 2024,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ];
+        // 1. Data PKM AKTIF untuk periode berjalan
+        if ($activePeriod) {
+            foreach ($dosens as $dosen) {
+                // Setiap dosen punya 1-2 PKM aktif
+                $jumlah = rand(1, 2);
+                for ($i = 0; $i < $jumlah; $i++) {
+                    $pkms[] = [
+                        'dosen_id' => $dosen->id,
+                        'academic_period_id' => $activePeriod->id,
+                        'judul_pkm' => $judulPkm[array_rand($judulPkm)] . ' ' . ($i + 1),
+                        'bidang_pkm' => $bidang[array_rand($bidang)],
+                        'jenis_pkm' => $jenis[array_rand($jenis)],
+                        'sumber_dana' => $sumberDana[array_rand($sumberDana)],
+                        'jumlah_dana' => rand(5000000, 50000000),
+                        'lokasi_kegiatan' => $lokasi[array_rand($lokasi)],
+                        'status' => 'aktif',
+                        'tahun' => date('Y'),
+                        'publikasi_link' => null,
+                        'file_laporan' => null,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
             }
         }
 
-        // PKM selesai untuk periode lalu
-        $oldPeriods = $periods->where('is_active', false)->take(3);
-
-        foreach ($oldPeriods as $period) {
-            foreach ($dosens->take(7) as $dosen) {
+        // 2. Data PKM SELESAI untuk periode lalu
+        foreach ($closedPeriods as $period) {
+            $ambilDosen = $dosens->take(7);
+            foreach ($ambilDosen as $dosen) {
                 $pkms[] = [
                     'dosen_id' => $dosen->id,
                     'academic_period_id' => $period->id,
-                    'judul_pkm' => $juduls[array_rand($juduls)],
-                    'bidang_pkm' => $bidangs[array_rand($bidangs)],
+                    'judul_pkm' => $judulPkm[array_rand($judulPkm)],
+                    'bidang_pkm' => $bidang[array_rand($bidang)],
                     'jenis_pkm' => $jenis[array_rand($jenis)],
-                    'sumber_dana' => $sumber_dana[array_rand($sumber_dana)],
-                    'jumlah_dana' => rand(1000000, 15000000),
-                    'lokasi_kegiatan' => $lokasis[array_rand($lokasis)],
+                    'sumber_dana' => $sumberDana[array_rand($sumberDana)],
+                    'jumlah_dana' => rand(10000000, 75000000),
+                    'lokasi_kegiatan' => $lokasi[array_rand($lokasi)],
                     'status' => 'selesai',
                     'tahun' => $period->tahun_awal,
+                    'publikasi_link' => 'https://pkm.ac.id/laporan/' . rand(1000, 9999),
+                    'file_laporan' => null,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
             }
         }
 
-        foreach (array_chunk($pkms, 50) as $chunk) {
-            Pkm::insert($chunk);
+        // Insert data
+        if (!empty($pkms)) {
+            foreach (array_chunk($pkms, 50) as $chunk) {
+                DB::table('table_pkms')->insert($chunk);
+            }
+            $this->command->info(count($pkms) . ' data PKM berhasil ditambahkan');
+        } else {
+            $this->command->info('Tidak ada data PKM yang ditambahkan');
         }
     }
 }

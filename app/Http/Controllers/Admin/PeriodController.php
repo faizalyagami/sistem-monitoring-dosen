@@ -10,8 +10,12 @@ class PeriodController extends Controller
 {
     public function index()
     {
-        $periods = AcademicPeriod::orderBy('urutan', 'desc')->paginate(10);
-        return view('admin.periods.index', compact('periods'));
+        $periods = AcademicPeriod::orderBy('tahun_awal', 'desc')
+            ->orderBy('semester', 'desc')
+            ->paginate(10);
+        $activePeriod = AcademicPeriod::where('is_active', true)->first();
+
+        return view('admin.periods.index', compact('periods', 'activePeriod'));
     }
 
     public function create()
@@ -28,16 +32,20 @@ class PeriodController extends Controller
             'tahun_akhir' => 'required|integer|min:2000|max:2100',
             'tanggal_mulai' => 'nullable|date',
             'tanggal_selesai' => 'nullable|date|after:tanggal_mulai',
-            'is_active' => 'boolean',
-            'is_closed' => 'boolean',
+            'is_active' => 'nullable|boolean',
+            'is_closed' => 'nullable|boolean',
             'keterangan' => 'nullable|max:255',
         ]);
 
         $validated['kode_periode'] = $validated['tahun_awal'] . ($validated['semester'] == 'ganjil' ? '1' : '2');
         $validated['urutan'] = $validated['tahun_awal'] * 10 + ($validated['semester'] == 'ganjil' ? 1 : 2);
 
+        // Set default values for checkboxes
+        $validated['is_active'] = $request->has('is_active');
+        $validated['is_closed'] = $request->has('is_closed');
+
         // If this period is set as active, deactivate others
-        if (isset($validated['is_active']) && $validated['is_active']) {
+        if ($validated['is_active']) {
             AcademicPeriod::where('is_active', true)->update(['is_active' => false]);
         }
 
@@ -47,13 +55,16 @@ class PeriodController extends Controller
             ->with('success', 'Periode akademik berhasil ditambahkan');
     }
 
-    public function edit(AcademicPeriod $period)
+    public function edit($id)
     {
+        $period = AcademicPeriod::findOrFail($id);
         return view('admin.periods.edit', compact('period'));
     }
 
-    public function update(Request $request, AcademicPeriod $period)
+    public function update(Request $request, $id)
     {
+        $period = AcademicPeriod::findOrFail($id);
+
         $validated = $request->validate([
             'nama_periode' => 'required|max:100',
             'semester' => 'required|in:ganjil,genap',
@@ -61,17 +72,21 @@ class PeriodController extends Controller
             'tahun_akhir' => 'required|integer|min:2000|max:2100',
             'tanggal_mulai' => 'nullable|date',
             'tanggal_selesai' => 'nullable|date|after:tanggal_mulai',
-            'is_active' => 'boolean',
-            'is_closed' => 'boolean',
+            'is_active' => 'nullable|boolean',
+            'is_closed' => 'nullable|boolean',
             'keterangan' => 'nullable|max:255',
         ]);
 
         $validated['kode_periode'] = $validated['tahun_awal'] . ($validated['semester'] == 'ganjil' ? '1' : '2');
         $validated['urutan'] = $validated['tahun_awal'] * 10 + ($validated['semester'] == 'ganjil' ? 1 : 2);
+        $validated['is_active'] = $request->has('is_active');
+        $validated['is_closed'] = $request->has('is_closed');
 
         // If this period is set as active, deactivate others
-        if (isset($validated['is_active']) && $validated['is_active']) {
-            AcademicPeriod::where('id', '!=', $period->id)->where('is_active', true)->update(['is_active' => false]);
+        if ($validated['is_active']) {
+            AcademicPeriod::where('id', '!=', $period->id)
+                ->where('is_active', true)
+                ->update(['is_active' => false]);
         }
 
         $period->update($validated);
@@ -80,12 +95,14 @@ class PeriodController extends Controller
             ->with('success', 'Periode akademik berhasil diupdate');
     }
 
-    public function destroy(AcademicPeriod $period)
+    public function destroy($id)
     {
+        $period = AcademicPeriod::findOrFail($id);
+
         // Check if period has related data
-        if ($period->pengajarans()->count() > 0 || $period->risets()->count() > 0) {
+        if ($period->pengajarans()->count() > 0) {
             return redirect()->route('admin.periods.index')
-                ->with('error', 'Periode tidak dapat dihapus karena memiliki data terkait');
+                ->with('error', 'Periode tidak dapat dihapus karena memiliki data pengajaran');
         }
 
         $period->delete();
@@ -94,12 +111,17 @@ class PeriodController extends Controller
             ->with('success', 'Periode akademik berhasil dihapus');
     }
 
-    public function setActive(AcademicPeriod $period)
+    public function setActive($id)
     {
+        $period = AcademicPeriod::findOrFail($id);
+
+        // Deactivate all periods
         AcademicPeriod::where('is_active', true)->update(['is_active' => false]);
+
+        // Activate selected period
         $period->update(['is_active' => true]);
 
         return redirect()->route('admin.periods.index')
-            ->with('success', 'Periode aktif berhasil diubah');
+            ->with('success', 'Periode aktif berhasil diubah menjadi: ' . $period->nama_periode);
     }
 }

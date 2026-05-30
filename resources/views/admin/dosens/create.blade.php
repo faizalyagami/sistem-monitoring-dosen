@@ -1,4 +1,3 @@
-{{-- resources/views/admin/dosens/create.blade.php --}}
 <x-layouts.app title="Tambah Dosen">
     <div class="container-fluid">
         <div class="d-flex align-items-center mb-4">

@@ -1,44 +1,75 @@
 <?php
-// app/Http/Controllers/Admin/PkmController.php
 
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\PKM;
+use App\Models\Pkm;
 use App\Models\Dosen;
 use App\Models\AcademicPeriod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
-class PKMController extends Controller
+class PkmController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     */
     public function index(Request $request)
     {
-        $query = PKM::with(['dosen', 'academicPeriod']);
+        $query = Pkm::with(['dosen', 'academicPeriod']);
 
-        if ($request->has('dosen_id') && $request->dosen_id) {
+        // Filter by dosen
+        if ($request->filled('dosen_id')) {
             $query->where('dosen_id', $request->dosen_id);
         }
 
-        if ($request->has('status') && $request->status) {
+        // Filter by status
+        if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
-        $pkms = $query->latest()->paginate(10);
-        $dosens = Dosen::all();
-        $periods = AcademicPeriod::orderBy('urutan', 'desc')->get();
+        // Filter by tahun
+        if ($request->filled('tahun')) {
+            $query->where('tahun', $request->tahun);
+        }
 
-        return view('admin.pkm.index', compact('pkms', 'dosens', 'periods'));
+        // Filter by bidang
+        if ($request->filled('bidang_pkm')) {
+            $query->where('bidang_pkm', 'like', '%' . $request->bidang_pkm . '%');
+        }
+
+        // Search by judul
+        if ($request->filled('search')) {
+            $query->where('judul_pkm', 'like', '%' . $request->search . '%');
+        }
+
+        $pkms = $query->orderBy('tahun', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        $dosens = Dosen::orderBy('nama')->get();
+        $periods = AcademicPeriod::orderBy('tahun_awal', 'desc')->get();
+        $tahunList = Pkm::select('tahun')->distinct()->orderBy('tahun', 'desc')->pluck('tahun');
+
+        return view('admin.pkm.index', compact('pkms', 'dosens', 'periods', 'tahunList'));
     }
 
+    /**
+     * Show the form for creating a new resource.
+     */
     public function create()
     {
-        $dosens = Dosen::all();
-        $periods = AcademicPeriod::orderBy('urutan', 'desc')->get();
+        $dosens = Dosen::orderBy('nama')->get();
+        $periods = AcademicPeriod::orderBy('tahun_awal', 'desc')->get();
+        $activePeriod = AcademicPeriod::where('is_active', true)->first();
 
-        return view('admin.pkm.create', compact('dosens', 'periods'));
+        return view('admin.pkm.create', compact('dosens', 'periods', 'activePeriod'));
     }
 
+    /**
+     * Store a newly created resource in storage.
+     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -66,16 +97,34 @@ class PKMController extends Controller
             ->with('success', 'Data PKM berhasil ditambahkan');
     }
 
-    public function edit(Pkm $pkm)
+    /**
+     * Display the specified resource.
+     */
+    public function show($id)
     {
-        $dosens = Dosen::all();
-        $periods = AcademicPeriod::orderBy('urutan', 'desc')->get();
+        $pkm = Pkm::with(['dosen', 'academicPeriod'])->findOrFail($id);
+        return view('admin.pkm.show', compact('pkm'));
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit($id)
+    {
+        $pkm = Pkm::findOrFail($id);
+        $dosens = Dosen::orderBy('nama')->get();
+        $periods = AcademicPeriod::orderBy('tahun_awal', 'desc')->get();
 
         return view('admin.pkm.edit', compact('pkm', 'dosens', 'periods'));
     }
 
-    public function update(Request $request, Pkm $pkm)
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, $id)
     {
+        $pkm = Pkm::findOrFail($id);
+
         $validated = $request->validate([
             'dosen_id' => 'required|exists:dosens,id',
             'academic_period_id' => 'required|exists:academic_periods,id',
@@ -104,8 +153,13 @@ class PKMController extends Controller
             ->with('success', 'Data PKM berhasil diupdate');
     }
 
-    public function destroy(PKM $pkm)
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy($id)
     {
+        $pkm = Pkm::findOrFail($id);
+
         if ($pkm->file_laporan) {
             Storage::disk('public')->delete($pkm->file_laporan);
         }
@@ -114,5 +168,27 @@ class PKMController extends Controller
 
         return redirect()->route('admin.pkm.index')
             ->with('success', 'Data PKM berhasil dihapus');
+    }
+
+    /**
+     * Download file laporan
+     */
+    public function downloadLaporan($id)
+    {
+        $pkm = Pkm::findOrFail($id);
+
+        if ($pkm->file_laporan && Storage::disk('public')->exists($pkm->file_laporan)) {
+            return Storage::disk('public')->download($pkm->file_laporan);
+        }
+
+        return redirect()->back()->with('error', 'File laporan tidak ditemukan');
+    }
+
+    /**
+     * Export data to Excel
+     */
+    public function export(Request $request)
+    {
+        return redirect()->back()->with('info', 'Fitur export sedang dalam pengembangan');
     }
 }

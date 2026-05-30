@@ -11,19 +11,32 @@ use Illuminate\Support\Facades\Storage;
 
 class DosenController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     */
     public function index(Request $request)
     {
         $query = Dosen::query();
 
-        if ($request->has('search') && $request->search) {
-            $query->where('nama', 'like', '%' . $request->search . '%')
-                ->orWhere('nidn', 'like', '%' . $request->search . '%')
-                ->orWhere('nik', 'like', '%' . $request->search . '%')
-                ->orWhere('email', 'like', '%' . $request->search . '%');
+        // Search
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('nama', 'like', "%{$search}%")
+                    ->orWhere('nidn', 'like', "%{$search}%")
+                    ->orWhere('nik', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            });
         }
 
-        if ($request->has('status') && $request->status) {
+        // Filter status
+        if ($request->filled('status')) {
             $query->where('status', $request->status);
+        }
+
+        // Filter pendidikan
+        if ($request->filled('pendidikan')) {
+            $query->where('pendidikan_terakhir', $request->pendidikan);
         }
 
         $dosens = $query->latest()->paginate(10);
@@ -31,11 +44,17 @@ class DosenController extends Controller
         return view('admin.dosens.index', compact('dosens'));
     }
 
+    /**
+     * Show the form for creating a new resource.
+     */
     public function create()
     {
         return view('admin.dosens.create');
     }
 
+    /**
+     * Store a newly created resource in storage.
+     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -63,17 +82,20 @@ class DosenController extends Controller
             'email' => $dosen->email,
             'password' => Hash::make('password123'),
             'role' => 'dosen',
-            'dosen_id' => $dosen->id,
             'status' => 'active',
+            'dosen_id' => $dosen->id,
         ]);
 
         return redirect()->route('admin.dosens.index')
             ->with('success', 'Data dosen berhasil ditambahkan. Password default: password123');
     }
 
-    public function show(Dosen $dosen)
+    /**
+     * Display the specified resource.
+     */
+    public function show($id)
     {
-        $dosen->load(['pengajarans.academicPeriod', 'risets', 'pkms', 'bimbingans', 'pelatihans']);
+        $dosen = Dosen::with(['pengajarans', 'risets', 'pkms', 'bimbingans'])->findOrFail($id);
 
         $stats = [
             'total_pengajaran' => $dosen->pengajarans->count(),
@@ -81,24 +103,32 @@ class DosenController extends Controller
             'total_riset' => $dosen->risets->count(),
             'total_pkm' => $dosen->pkms->count(),
             'total_bimbingan' => $dosen->bimbingans->count(),
-            'total_pelatihan' => $dosen->pelatihans->count(),
         ];
 
         return view('admin.dosens.show', compact('dosen', 'stats'));
     }
 
-    public function edit(Dosen $dosen)
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit($id)
     {
+        $dosen = Dosen::findOrFail($id);
         return view('admin.dosens.edit', compact('dosen'));
     }
 
-    public function update(Request $request, Dosen $dosen)
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, $id)
     {
+        $dosen = Dosen::findOrFail($id);
+
         $validated = $request->validate([
-            'nidn' => 'required|max:20|unique:dosens,nidn,' . $dosen->id,
-            'nik' => 'required|max:20|unique:dosens,nik,' . $dosen->id,
+            'nidn' => 'required|max:20|unique:dosens,nidn,' . $id,
+            'nik' => 'required|max:20|unique:dosens,nik,' . $id,
             'nama' => 'required|max:100',
-            'email' => 'required|email|unique:dosens,email,' . $dosen->id,
+            'email' => 'required|email|unique:dosens,email,' . $id,
             'status' => 'required|in:tetap,kontrak,luar_biasa,pensiun',
             'pendidikan_terakhir' => 'required|in:S1,S2,S3',
             'jabatan_fungsional' => 'required|max:50',
@@ -128,8 +158,13 @@ class DosenController extends Controller
             ->with('success', 'Data dosen berhasil diupdate');
     }
 
-    public function destroy(Dosen $dosen)
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy($id)
     {
+        $dosen = Dosen::findOrFail($id);
+
         if ($dosen->photo) {
             Storage::disk('public')->delete($dosen->photo);
         }
@@ -142,5 +177,11 @@ class DosenController extends Controller
 
         return redirect()->route('admin.dosens.index')
             ->with('success', 'Data dosen berhasil dihapus');
+    }
+
+    public function export()
+    {
+        // Will be implemented later
+        return redirect()->back()->with('info', 'Fitur export sedang dalam pengembangan');
     }
 }

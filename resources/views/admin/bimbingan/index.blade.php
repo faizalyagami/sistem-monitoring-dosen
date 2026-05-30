@@ -1,0 +1,334 @@
+@extends('components.layouts.app')
+
+@section('title', 'Data Bimbingan')
+
+@section('content')
+    <div class="container-fluid px-4">
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="h3 mb-0 text-gray-800">
+                    <i class="bi bi-chat-dots"></i> Data Bimbingan
+                </h1>
+                <p class="text-muted">Kelola data bimbingan skripsi, tesis, dan disertasi</p>
+            </div>
+            <div>
+                <a href="{{ route('admin.bimbingan.export') }}" class="btn btn-success me-2">
+                    <i class="bi bi-file-excel"></i> Export
+                </a>
+                <a href="{{ route('admin.bimbingan.create') }}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Tambah Bimbingan
+                </a>
+            </div>
+        </div>
+
+        <!-- Info Cards -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-3">
+                <div class="card bg-primary text-white shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-0">Total Skripsi</h6>
+                                <h4 class="mb-0 mt-2">{{ $bimbingans->where('jenis_bimbingan', 'skripsi')->count() }}</h4>
+                            </div>
+                            <i class="bi bi-book fs-1 opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-success text-white shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-0">Total Tesis</h6>
+                                <h4 class="mb-0 mt-2">{{ $bimbingans->where('jenis_bimbingan', 'tesis')->count() }}</h4>
+                            </div>
+                            <i class="bi bi-mortarboard fs-1 opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-info text-white shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-0">Total Disertasi</h6>
+                                <h4 class="mb-0 mt-2">{{ $bimbingans->where('jenis_bimbingan', 'disertasi')->count() }}</h4>
+                            </div>
+                            <i class="bi bi-award fs-1 opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-warning text-white shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-0">Total Mahasiswa</h6>
+                                <h4 class="mb-0 mt-2">{{ $bimbingans->sum('jumlah_mahasiswa') }}</h4>
+                            </div>
+                            <i class="bi bi-people fs-1 opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Card -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <form method="GET" action="{{ route('admin.bimbingan.index') }}" class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Dosen</label>
+                        <select name="dosen_id" class="form-select">
+                            <option value="">Semua Dosen</option>
+                            @foreach ($dosens as $dosen)
+                                <option value="{{ $dosen->id }}"
+                                    {{ request('dosen_id') == $dosen->id ? 'selected' : '' }}>
+                                    {{ $dosen->nama }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold">Jenis Bimbingan</label>
+                        <select name="jenis_bimbingan" class="form-select">
+                            <option value="">Semua</option>
+                            <option value="skripsi" {{ request('jenis_bimbingan') == 'skripsi' ? 'selected' : '' }}>Skripsi
+                            </option>
+                            <option value="tesis" {{ request('jenis_bimbingan') == 'tesis' ? 'selected' : '' }}>Tesis
+                            </option>
+                            <option value="disertasi" {{ request('jenis_bimbingan') == 'disertasi' ? 'selected' : '' }}>
+                                Disertasi</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold">Periode</label>
+                        <select name="academic_period_id" class="form-select">
+                            <option value="">Semua Periode</option>
+                            @foreach ($periods as $period)
+                                <option value="{{ $period->id }}"
+                                    {{ request('academic_period_id') == $period->id ? 'selected' : '' }}>
+                                    {{ $period->nama_periode }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold">Semester</label>
+                        <select name="semester" class="form-select">
+                            <option value="">Semua</option>
+                            <option value="ganjil" {{ request('semester') == 'ganjil' ? 'selected' : '' }}>Ganjil</option>
+                            <option value="genap" {{ request('semester') == 'genap' ? 'selected' : '' }}>Genap</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold">Tahun</label>
+                        <select name="tahun_akademik" class="form-select">
+                            <option value="">Semua Tahun</option>
+                            @foreach ($tahunList as $tahun)
+                                <option value="{{ $tahun }}"
+                                    {{ request('tahun_akademik') == $tahun ? 'selected' : '' }}>
+                                    {{ $tahun }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-1 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Data Table -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-white py-3">
+                <h6 class="mb-0 fw-bold">Daftar Bimbingan Mahasiswa</h6>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th width="50">No</th>
+                                <th>Dosen Pembimbing</th>
+                                <th>Jenis Bimbingan</th>
+                                <th>Kategori</th>
+                                <th>Jumlah Mahasiswa</th>
+                                <th>Periode</th>
+                                <th>Semester</th>
+                                <th>Tahun</th>
+                                <th width="100">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($bimbingans as $index => $bimbingan)
+                                <tr>
+                                    <td>{{ $bimbingans->firstItem() + $index }}</td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="avatar-sm"
+                                                style="width: 32px; height: 32px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px;">
+                                                {{ substr($bimbingan->dosen->nama ?? 'P', 0, 1) }}
+                                            </div>
+                                            <div>
+                                                <span class="small">{{ $bimbingan->dosen->nama ?? '-' }}</span>
+                                                <br>
+                                                <small class="text-muted">{{ $bimbingan->dosen->nidn ?? '-' }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @if ($bimbingan->jenis_bimbingan == 'skripsi')
+                                            <span class="badge bg-primary">Skripsi</span>
+                                        @elseif($bimbingan->jenis_bimbingan == 'tesis')
+                                            <span class="badge bg-success">Tesis</span>
+                                        @else
+                                            <span class="badge bg-info">Disertasi</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary">{{ $bimbingan->kategori_bimbingan ?? '-' }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="fw-bold">{{ $bimbingan->jumlah_mahasiswa }}</span> Mahasiswa
+                                    </td>
+                                    <td>
+                                        <small>{{ $bimbingan->academicPeriod->nama_periode ?? '-' }}</small>
+                                    </td>
+                                    <td>
+                                        <span
+                                            class="badge bg-{{ $bimbingan->semester == 'ganjil' ? 'info' : 'warning' }}">
+                                            {{ ucfirst($bimbingan->semester) }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-dark">{{ $bimbingan->tahun_akademik }}</span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <a href="{{ route('admin.bimbingan.show', $bimbingan->id) }}"
+                                                class="btn btn-info" title="Detail">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <a href="{{ route('admin.bimbingan.edit', $bimbingan->id) }}"
+                                                class="btn btn-warning" title="Edit">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <button type="button" class="btn btn-danger"
+                                                onclick="confirmDelete({{ $bimbingan->id }})" title="Hapus">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                        <form id="delete-form-{{ $bimbingan->id }}"
+                                            action="{{ route('admin.bimbingan.destroy', $bimbingan->id) }}"
+                                            method="POST" style="display: none;">
+                                            @csrf
+                                            @method('DELETE')
+                                        </form>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="9" class="text-center py-5">
+                                        <i class="bi bi-inbox fs-1 text-muted"></i>
+                                        <p class="mt-2 text-muted">Belum ada data bimbingan</p>
+                                        <a href="{{ route('admin.bimbingan.create') }}" class="btn btn-sm btn-primary">
+                                            Tambah Bimbingan Sekarang
+                                        </a>
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="card-footer bg-white py-3">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <div class="text-muted small">
+                            <i class="bi bi-info-circle"></i>
+                            Menampilkan {{ $bimbingans->firstItem() ?? 0 }} - {{ $bimbingans->lastItem() ?? 0 }}
+                            dari {{ $bimbingans->total() }} data
+                            @if ($bimbingans->total() > 0)
+                                <span class="ms-2 text-success">
+                                    (Halaman {{ $bimbingans->currentPage() }} dari {{ $bimbingans->lastPage() }})
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex justify-content-end">
+                            {{ $bimbingans->withQueryString()->links('pagination::bootstrap-5') }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .avatar-sm {
+            transition: transform 0.3s;
+        }
+
+        .table-hover tbody tr:hover .avatar-sm {
+            transform: scale(1.1);
+        }
+
+        .pagination {
+            margin-bottom: 0;
+            gap: 5px;
+        }
+
+        .page-item .page-link {
+            border-radius: 8px;
+            color: #6c5ce7;
+            border: 1px solid #e0e0e0;
+            padding: 8px 14px;
+            font-size: 0.875rem;
+            transition: all 0.3s;
+        }
+
+        .page-item .page-link:hover {
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            color: white;
+            border-color: transparent;
+            transform: translateY(-2px);
+        }
+
+        .page-item.active .page-link {
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            border-color: transparent;
+            color: white;
+        }
+    </style>
+
+    <script>
+        function confirmDelete(id) {
+            Swal.fire({
+                title: 'Apakah Anda yakin?',
+                text: "Data bimbingan yang dihapus tidak dapat dikembalikan!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('delete-form-' + id).submit();
+                }
+            });
+        }
+    </script>
+@endsection

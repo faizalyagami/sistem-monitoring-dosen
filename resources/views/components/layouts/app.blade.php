@@ -1,4 +1,3 @@
-{{-- resources/views/layouts/app.blade.php --}}
 <!DOCTYPE html>
 <html lang="id">
 
@@ -453,6 +452,56 @@
             box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
         }
 
+        .pagination {
+            margin-bottom: 0;
+            gap: 5px;
+        }
+
+        .page-item .page-link {
+            border-radius: 10px;
+            color: #4361ee;
+            border: 1px solid #e2e8f0;
+            padding: 8px 16px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .page-item .page-link:hover {
+            background: linear-gradient(135deg, #4361ee, #764ba2);
+            color: white;
+            border-color: transparent;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+        }
+
+        .page-item.active .page-link {
+            background: linear-gradient(135deg, #4361ee, #764ba2);
+            border-color: transparent;
+            color: white;
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+        }
+
+        .page-item.disabled .page-link {
+            color: #94a3b8;
+            background-color: #f1f5f9;
+            border-color: #e2e8f0;
+            cursor: not-allowed;
+        }
+
+        .page-item:first-child .page-link,
+        .page-item:last-child .page-link {
+            border-radius: 10px;
+        }
+
+        /* Info text */
+        .pagination-info {
+            background: #f8fafc;
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+        }
+
         /* Responsive */
         @media (max-width: 992px) {
             #sidebar {
@@ -506,9 +555,6 @@
                         <i class="bi bi-list"></i>
                         <span class="d-none d-md-inline">Menu</span>
                     </button>
-                    <a href="{{ route('admin.dashboard') }}" class="navbar-brand-custom d-none d-md-block">
-                        <i class="bi bi-graph-up"></i> SIMONKER
-                    </a>
                 </div>
 
                 <div class="d-flex align-items-center gap-3">

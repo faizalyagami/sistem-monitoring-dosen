@@ -1,4 +1,3 @@
-{{-- resources/views/layouts/sidebar.blade.php --}}
 <nav id="sidebar">
     <div class="sidebar-header">
         <div class="logo-icon">
@@ -12,7 +11,7 @@
 
     <ul class="components">
         <!-- Dashboard -->
-        <li class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
+        <li class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
             <a href="{{ route('admin.dashboard') }}">
                 <i class="bi bi-speedometer2"></i> Dashboard
             </a>
@@ -58,11 +57,16 @@
             </li>
         </ul>
 
-        <div class="menu-title">LAPORAN</div>
+        <div class="menu-title">LAPORAN & EVALUASI</div>
         <ul class="components">
             <li class="{{ request()->routeIs('admin.laporan.*') ? 'active' : '' }}">
                 <a href="{{ route('admin.laporan.index') }}">
                     <i class="bi bi-file-text"></i> Laporan Kinerja
+                </a>
+            </li>
+            <li class="{{ request()->routeIs('admin.evaluasi-kinerja.*') ? 'active' : '' }}">
+                <a href="{{ route('admin.evaluasi-kinerja.index') }}">
+                    <i class="bi bi-clipboard-check"></i> Evaluasi Kinerja
                 </a>
             </li>
             <li class="{{ request()->routeIs('admin.activity-logs.*') ? 'active' : '' }}">
