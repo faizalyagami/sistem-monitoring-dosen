@@ -8,40 +8,68 @@ use App\Models\Dosen;
 use App\Models\AcademicPeriod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class RisetController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     */
     public function index(Request $request)
     {
         $query = Riset::with(['dosen', 'academicPeriod']);
 
-        if ($request->has('dosen_id') && $request->dosen_id) {
+        // Filter by dosen
+        if ($request->filled('dosen_id')) {
             $query->where('dosen_id', $request->dosen_id);
         }
 
-        if ($request->has('status') && $request->status) {
+        // Filter by status
+        if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
-        if ($request->has('tahun') && $request->tahun) {
+        // Filter by tahun
+        if ($request->filled('tahun')) {
             $query->where('tahun', $request->tahun);
         }
 
-        $risets = $query->latest()->paginate(10);
-        $dosens = Dosen::all();
-        $periods = AcademicPeriod::orderBy('urutan', 'desc')->get();
+        // Filter by bidang riset
+        if ($request->filled('bidang_riset')) {
+            $query->where('bidang_riset', 'like', '%' . $request->bidang_riset . '%');
+        }
 
-        return view('admin.riset.index', compact('risets', 'dosens', 'periods'));
+        // Search by judul
+        if ($request->filled('search')) {
+            $query->where('judul_riset', 'like', '%' . $request->search . '%');
+        }
+
+        $risets = $query->orderBy('tahun', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        $dosens = Dosen::orderBy('nama')->get();
+        $periods = AcademicPeriod::orderBy('tahun_awal', 'desc')->get();
+        $tahunList = Riset::select('tahun')->distinct()->orderBy('tahun', 'desc')->pluck('tahun');
+
+        return view('admin.riset.index', compact('risets', 'dosens', 'periods', 'tahunList'));
     }
 
+    /**
+     * Show the form for creating a new resource.
+     */
     public function create()
     {
-        $dosens = Dosen::all();
-        $periods = AcademicPeriod::orderBy('urutan', 'desc')->get();
+        $dosens = Dosen::orderBy('nama')->get();
+        $periods = AcademicPeriod::orderBy('tahun_awal', 'desc')->get();
+        $activePeriod = AcademicPeriod::where('is_active', true)->first();
 
-        return view('admin.riset.create', compact('dosens', 'periods'));
+        return view('admin.riset.create', compact('dosens', 'periods', 'activePeriod'));
     }
 
+    /**
+     * Store a newly created resource in storage.
+     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -69,16 +97,34 @@ class RisetController extends Controller
             ->with('success', 'Data penelitian berhasil ditambahkan');
     }
 
-    public function edit(Riset $riset)
+    /**
+     * Display the specified resource.
+     */
+    public function show($id)
     {
-        $dosens = Dosen::all();
-        $periods = AcademicPeriod::orderBy('urutan', 'desc')->get();
+        $riset = Riset::with(['dosen', 'academicPeriod'])->findOrFail($id);
+        return view('admin.riset.show', compact('riset'));
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit($id)
+    {
+        $riset = Riset::findOrFail($id);
+        $dosens = Dosen::orderBy('nama')->get();
+        $periods = AcademicPeriod::orderBy('tahun_awal', 'desc')->get();
 
         return view('admin.riset.edit', compact('riset', 'dosens', 'periods'));
     }
 
-    public function update(Request $request, Riset $riset)
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, $id)
     {
+        $riset = Riset::findOrFail($id);
+
         $validated = $request->validate([
             'dosen_id' => 'required|exists:dosens,id',
             'academic_period_id' => 'required|exists:academic_periods,id',
@@ -107,8 +153,13 @@ class RisetController extends Controller
             ->with('success', 'Data penelitian berhasil diupdate');
     }
 
-    public function destroy(Riset $riset)
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy($id)
     {
+        $riset = Riset::findOrFail($id);
+
         if ($riset->file_laporan) {
             Storage::disk('public')->delete($riset->file_laporan);
         }
@@ -117,5 +168,28 @@ class RisetController extends Controller
 
         return redirect()->route('admin.riset.index')
             ->with('success', 'Data penelitian berhasil dihapus');
+    }
+
+    /**
+     * Download file laporan
+     */
+    public function downloadLaporan($id)
+    {
+        $riset = Riset::findOrFail($id);
+
+        if ($riset->file_laporan && Storage::disk('public')->exists($riset->file_laporan)) {
+            return Storage::disk('public')->download($riset->file_laporan);
+        }
+
+        return redirect()->back()->with('error', 'File laporan tidak ditemukan');
+    }
+
+    /**
+     * Export data to Excel
+     */
+    public function export(Request $request)
+    {
+        // Will be implemented later
+        return redirect()->back()->with('info', 'Fitur export sedang dalam pengembangan');
     }
 }

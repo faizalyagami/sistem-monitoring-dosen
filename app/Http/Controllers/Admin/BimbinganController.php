@@ -7,36 +7,68 @@ use App\Models\Bimbingan;
 use App\Models\Dosen;
 use App\Models\AcademicPeriod;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class BimbinganController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     */
     public function index(Request $request)
     {
         $query = Bimbingan::with(['dosen', 'academicPeriod']);
 
-        if ($request->has('dosen_id') && $request->dosen_id) {
+        // Filter by dosen
+        if ($request->filled('dosen_id')) {
             $query->where('dosen_id', $request->dosen_id);
         }
 
-        if ($request->has('jenis_bimbingan') && $request->jenis_bimbingan) {
+        // Filter by jenis bimbingan
+        if ($request->filled('jenis_bimbingan')) {
             $query->where('jenis_bimbingan', $request->jenis_bimbingan);
         }
 
-        $bimbingans = $query->latest()->paginate(10);
-        $dosens = Dosen::all();
-        $periods = AcademicPeriod::orderBy('urutan', 'desc')->get();
+        // Filter by periode
+        if ($request->filled('academic_period_id')) {
+            $query->where('academic_period_id', $request->academic_period_id);
+        }
 
-        return view('admin.bimbingan.index', compact('bimbingans', 'dosens', 'periods'));
+        // Filter by semester
+        if ($request->filled('semester')) {
+            $query->where('semester', $request->semester);
+        }
+
+        // Filter by tahun
+        if ($request->filled('tahun_akademik')) {
+            $query->where('tahun_akademik', $request->tahun_akademik);
+        }
+
+        $bimbingans = $query->orderBy('tahun_akademik', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        $dosens = Dosen::orderBy('nama')->get();
+        $periods = AcademicPeriod::orderBy('tahun_awal', 'desc')->get();
+        $tahunList = Bimbingan::select('tahun_akademik')->distinct()->orderBy('tahun_akademik', 'desc')->pluck('tahun_akademik');
+
+        return view('admin.bimbingan.index', compact('bimbingans', 'dosens', 'periods', 'tahunList'));
     }
 
+    /**
+     * Show the form for creating a new resource.
+     */
     public function create()
     {
-        $dosens = Dosen::all();
-        $periods = AcademicPeriod::orderBy('urutan', 'desc')->get();
+        $dosens = Dosen::orderBy('nama')->get();
+        $periods = AcademicPeriod::orderBy('tahun_awal', 'desc')->get();
+        $activePeriod = AcademicPeriod::where('is_active', true)->first();
 
-        return view('admin.bimbingan.create', compact('dosens', 'periods'));
+        return view('admin.bimbingan.create', compact('dosens', 'periods', 'activePeriod'));
     }
 
+    /**
+     * Store a newly created resource in storage.
+     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -44,7 +76,7 @@ class BimbinganController extends Controller
             'academic_period_id' => 'required|exists:academic_periods,id',
             'jenis_bimbingan' => 'required|in:skripsi,tesis,disertasi',
             'kategori_bimbingan' => 'nullable|max:100',
-            'jumlah_mahasiswa' => 'required|integer|min:0',
+            'jumlah_mahasiswa' => 'required|integer|min:1',
             'semester' => 'required|in:ganjil,genap',
             'tahun_akademik' => 'required|integer|min:2000|max:2100',
         ]);
@@ -55,22 +87,40 @@ class BimbinganController extends Controller
             ->with('success', 'Data bimbingan berhasil ditambahkan');
     }
 
-    public function edit(Bimbingan $bimbingan)
+    /**
+     * Display the specified resource.
+     */
+    public function show($id)
     {
-        $dosens = Dosen::all();
-        $periods = AcademicPeriod::orderBy('urutan', 'desc')->get();
+        $bimbingan = Bimbingan::with(['dosen', 'academicPeriod'])->findOrFail($id);
+        return view('admin.bimbingan.show', compact('bimbingan'));
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit($id)
+    {
+        $bimbingan = Bimbingan::findOrFail($id);
+        $dosens = Dosen::orderBy('nama')->get();
+        $periods = AcademicPeriod::orderBy('tahun_awal', 'desc')->get();
 
         return view('admin.bimbingan.edit', compact('bimbingan', 'dosens', 'periods'));
     }
 
-    public function update(Request $request, Bimbingan $bimbingan)
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, $id)
     {
+        $bimbingan = Bimbingan::findOrFail($id);
+
         $validated = $request->validate([
             'dosen_id' => 'required|exists:dosens,id',
             'academic_period_id' => 'required|exists:academic_periods,id',
             'jenis_bimbingan' => 'required|in:skripsi,tesis,disertasi',
             'kategori_bimbingan' => 'nullable|max:100',
-            'jumlah_mahasiswa' => 'required|integer|min:0',
+            'jumlah_mahasiswa' => 'required|integer|min:1',
             'semester' => 'required|in:ganjil,genap',
             'tahun_akademik' => 'required|integer|min:2000|max:2100',
         ]);
@@ -81,11 +131,23 @@ class BimbinganController extends Controller
             ->with('success', 'Data bimbingan berhasil diupdate');
     }
 
-    public function destroy(Bimbingan $bimbingan)
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy($id)
     {
+        $bimbingan = Bimbingan::findOrFail($id);
         $bimbingan->delete();
 
         return redirect()->route('admin.bimbingan.index')
             ->with('success', 'Data bimbingan berhasil dihapus');
+    }
+
+    /**
+     * Export data to Excel
+     */
+    public function export(Request $request)
+    {
+        return redirect()->back()->with('info', 'Fitur export sedang dalam pengembangan');
     }
 }

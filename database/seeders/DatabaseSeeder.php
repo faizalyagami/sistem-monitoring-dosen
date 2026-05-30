@@ -11,16 +11,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Urutan seeding penting karena ada foreign key constraints
-
         $this->call([
-            AcademicPeriodSeeder::class,  // 1. Periode akademik dulu
-            DosenSeeder::class,           // 2. Data dosen
-            UserSeeder::class,            // 3. User accounts (butuh dosen_id)
-            // PengajaranSeeder::class,      // 4. Pengajaran (butuh dosen & period)
-            // RisetSeeder::class,           // 5. Penelitian (butuh dosen & period)
-            // PkmSeeder::class,             // 6. PKM (butuh dosen & period)
-            // BimbinganSeeder::class,       // 7. Bimbingan (butuh dosen & period)
+            AcademicPeriodSeeder::class,
+            DosenSeeder::class,
+            UserSeeder::class,
+            PengajaranSeeder::class,
+            RisetSeeder::class,
+            PkmSeeder::class,
+            BimbinganSeeder::class,
         ]);
 
         $this->command->info('Semua seeder berhasil dijalankan!');
