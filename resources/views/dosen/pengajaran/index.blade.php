@@ -67,7 +67,9 @@
                                 <th>Kelas</th>
                                 <th>SKS</th>
                                 <th>Mahasiswa</th>
-                                <th>Semester</th>
+                                <th>Periode</th>
+                                <th>No. SK</th>
+                                <th>Tanggal SK</th>
                                 <th>Tahun</th>
                                 <th width="100">Aksi</th>
                             </tr>
@@ -79,9 +81,19 @@
                                     <td><strong>{{ $pengajaran->kode_mk }}</strong></td>
                                     <td>{{ $pengajaran->nama_mk }}</td>
                                     <td>{{ $pengajaran->kelas }}</td>
-                                    <td>{{ $pengajaran->sks }} SKS</td>
-                                    <td>{{ $pengajaran->jumlah_mahasiswa }} Mhs</td>
-                                    <td>{{ ucfirst($pengajaran->semester) }}</td>
+                                    <td><span class="badge bg-primary">{{ $pengajaran->sks }} SKS</span></td>
+                                    <td><span class="badge bg-info">{{ $pengajaran->jumlah_mahasiswa }} Mhs</span></td>
+                                    <td>
+                                        <small
+                                            class="text-muted">{{ $pengajaran->academicPeriod->nama_periode ?? '-' }}</small>
+                                        <br>
+                                        <span
+                                            class="badge bg-{{ $pengajaran->semester == 'ganjil' ? 'info' : 'warning' }} small">
+                                            {{ ucfirst($pengajaran->semester) }}
+                                        </span>
+                                    </td>
+                                    <td>{{ $pengajaran->no_sk ?? '-' }}</td>
+                                    <td>{{ $pengajaran->tanggal_sk ? $pengajaran->tanggal_sk->format('d/m/Y') : '-' }}</td>
                                     <td>{{ $pengajaran->tahun_akademik }}</td>
                                     <td>
                                         <div class="btn-group btn-group-sm">

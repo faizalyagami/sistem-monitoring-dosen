@@ -69,6 +69,31 @@
                                         <th>Jumlah Mahasiswa</th>
                                         <td>: <span class="fw-bold">{{ $bimbingan->jumlah_mahasiswa }}</span> Mahasiswa</td>
                                     </tr>
+                                    @if ($bimbingan->no_sk_pembimbing)
+                                        <tr>
+                                            <th>No. SK Pembimbing</th>
+                                            <td>: {{ $bimbingan->no_sk_pembimbing }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Tanggal SK Pembimbing</th>
+                                            <td>:
+                                                {{ $bimbingan->tanggal_sk_pembimbing ? $bimbingan->tanggal_sk_pembimbing->format('d/m/Y') : '-' }}
+                                            </td>
+                                        </tr>
+                                    @endif
+
+                                    @if ($bimbingan->no_sk_penguji)
+                                        <tr>
+                                            <th>No. SK Penguji</th>
+                                            <td>: {{ $bimbingan->no_sk_penguji }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Tanggal SK Penguji</th>
+                                            <td>:
+                                                {{ $bimbingan->tanggal_sk_penguji ? $bimbingan->tanggal_sk_penguji->format('d/m/Y') : '-' }}
+                                            </td>
+                                        </tr>
+                                    @endif
                                 </table>
                             </div>
                             <div class="col-md-5">

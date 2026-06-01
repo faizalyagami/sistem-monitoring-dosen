@@ -143,6 +143,46 @@
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
+                                <div class="col-md-6">
+                                    <label for="no_sk_pembimbing" class="form-label fw-bold">No. SK Pembimbing</label>
+                                    <input type="text" name="no_sk_pembimbing" id="no_sk_pembimbing"
+                                        class="form-control @error('no_sk_pembimbing') is-invalid @enderror"
+                                        value="{{ old('no_sk_pembimbing', $bimbingan->no_sk_pembimbing ?? '') }}">
+                                    @error('no_sk_pembimbing')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="tanggal_sk_pembimbing" class="form-label fw-bold">Tanggal SK
+                                        Pembimbing</label>
+                                    <input type="date" name="tanggal_sk_pembimbing" id="tanggal_sk_pembimbing"
+                                        class="form-control @error('tanggal_sk_pembimbing') is-invalid @enderror"
+                                        value="{{ old('tanggal_sk_pembimbing', isset($bimbingan) && $bimbingan->tanggal_sk_pembimbing ? $bimbingan->tanggal_sk_pembimbing->format('Y-m-d') : '') }}">
+                                    @error('tanggal_sk_pembimbing')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="no_sk_penguji" class="form-label fw-bold">No. SK Penguji</label>
+                                    <input type="text" name="no_sk_penguji" id="no_sk_penguji"
+                                        class="form-control @error('no_sk_penguji') is-invalid @enderror"
+                                        value="{{ old('no_sk_penguji', $bimbingan->no_sk_penguji ?? '') }}">
+                                    @error('no_sk_penguji')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="tanggal_sk_penguji" class="form-label fw-bold">Tanggal SK Penguji</label>
+                                    <input type="date" name="tanggal_sk_penguji" id="tanggal_sk_penguji"
+                                        class="form-control @error('tanggal_sk_penguji') is-invalid @enderror"
+                                        value="{{ old('tanggal_sk_penguji', isset($bimbingan) && $bimbingan->tanggal_sk_penguji ? $bimbingan->tanggal_sk_penguji->format('Y-m-d') : '') }}">
+                                    @error('tanggal_sk_penguji')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
                             </div>
 
                             <div class="mt-4">

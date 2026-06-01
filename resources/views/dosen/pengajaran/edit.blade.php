@@ -1,6 +1,6 @@
 @extends('components.layouts.app')
 
-@section('title', 'Edit Pengajaran')
+@section('title', 'Tambah Pengajaran')
 
 @section('content')
     <div class="container-fluid px-4">
@@ -9,13 +9,12 @@
                 <div class="card shadow-sm">
                     <div class="card-header bg-white py-3">
                         <h5 class="mb-0 fw-bold">
-                            <i class="bi bi-pencil-square me-2"></i> Edit Data Pengajaran
+                            <i class="bi bi-plus-circle me-2"></i> Tambah Data Pengajaran
                         </h5>
                     </div>
                     <div class="card-body">
-                        <form action="{{ route('dosen.pengajaran.update', $pengajaran->id) }}" method="POST">
+                        <form action="{{ route('dosen.pengajaran.store') }}" method="POST">
                             @csrf
-                            @method('PUT')
 
                             <div class="row g-3">
                                 <div class="col-md-6">
@@ -72,6 +71,7 @@
                                     </label>
                                     <select name="sks" id="sks"
                                         class="form-select @error('sks') is-invalid @enderror" required>
+                                        <option value="">Pilih SKS</option>
                                         <option value="1" {{ old('sks', $pengajaran->sks) == 1 ? 'selected' : '' }}>1
                                             SKS</option>
                                         <option value="2" {{ old('sks', $pengajaran->sks) == 2 ? 'selected' : '' }}>2
@@ -101,25 +101,6 @@
                                 </div>
 
                                 <div class="col-md-6">
-                                    <label for="dosen_id" class="form-label fw-bold">
-                                        Dosen Pengajar <span class="text-danger">*</span>
-                                    </label>
-                                    <select name="dosen_id" id="dosen_id"
-                                        class="form-select @error('dosen_id') is-invalid @enderror" required>
-                                        <option value="">Pilih Dosen</option>
-                                        @foreach ($dosens as $dosen)
-                                            <option value="{{ $dosen->id }}"
-                                                {{ old('dosen_id', $pengajaran->dosen_id) == $dosen->id ? 'selected' : '' }}>
-                                                {{ $dosen->nama }} ({{ $dosen->nidn }})
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    @error('dosen_id')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-
-                                <div class="col-md-6">
                                     <label for="academic_period_id" class="form-label fw-bold">
                                         Periode Akademik <span class="text-danger">*</span>
                                     </label>
@@ -130,9 +111,6 @@
                                             <option value="{{ $period->id }}"
                                                 {{ old('academic_period_id', $pengajaran->academic_period_id) == $period->id ? 'selected' : '' }}>
                                                 {{ $period->nama_periode }}
-                                                @if ($period->is_active)
-                                                    (Aktif)
-                                                @endif
                                             </option>
                                         @endforeach
                                     </select>
@@ -147,9 +125,11 @@
                                     </label>
                                     <select name="semester" id="semester"
                                         class="form-select @error('semester') is-invalid @enderror" required>
+                                        <option value="">Pilih Semester</option>
                                         <option value="ganjil"
                                             {{ old('semester', $pengajaran->semester) == 'ganjil' ? 'selected' : '' }}>
-                                            Ganjil</option>
+                                            Ganjil
+                                        </option>
                                         <option value="genap"
                                             {{ old('semester', $pengajaran->semester) == 'genap' ? 'selected' : '' }}>Genap
                                         </option>
@@ -165,8 +145,29 @@
                                     </label>
                                     <input type="number" name="tahun_akademik" id="tahun_akademik"
                                         class="form-control @error('tahun_akademik') is-invalid @enderror"
-                                        value="{{ old('tahun_akademik', $pengajaran->tahun_akademik) }}" required>
+                                        value="{{ old('tahun_akademik', date('Y'), $pengajaran->tahun_akademik) }}"
+                                        required>
                                     @error('tahun_akademik')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="col-md-12">
+                                    <label for="no_sk" class="form-label fw-bold">No. SK (Surat Keputusan)</label>
+                                    <input type="text" name="no_sk" id="no_sk"
+                                        class="form-control @error('no_sk') is-invalid @enderror"
+                                        value="{{ old('no_sk', $pengajaran->no_sk) }}">
+                                    @error('no_sk')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="col-md-12">
+                                    <label for="tanggal_sk" class="form-label fw-bold">Tanggal SK</label>
+                                    <input type="date" name="tanggal_sk" id="tanggal_sk"
+                                        class="form-control @error('tanggal_sk') is-invalid @enderror"
+                                        value="{{ old('tanggal_sk', $pengajaran->tanggal_sk) }}">
+                                    @error('tanggal_sk')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
@@ -174,7 +175,7 @@
 
                             <div class="mt-4">
                                 <button type="submit" class="btn btn-primary">
-                                    <i class="bi bi-save me-1"></i> Update
+                                    <i class="bi bi-save me-1"></i> Simpan
                                 </button>
                                 <a href="{{ route('dosen.pengajaran.index') }}" class="btn btn-secondary">
                                     <i class="bi bi-x-circle me-1"></i> Batal
@@ -186,4 +187,16 @@
             </div>
         </div>
     </div>
+
+    <script>
+        // Auto-fill tahun akademik based on selected period
+        document.getElementById('academic_period_id').addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const periodText = selectedOption.text;
+            const yearMatch = periodText.match(/(\d{4})\/\d{4}/);
+            if (yearMatch) {
+                document.getElementById('tahun_akademik').value = yearMatch[1];
+            }
+        });
+    </script>
 @endsection

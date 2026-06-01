@@ -15,17 +15,29 @@ class BimbinganController extends Controller
         $user = Auth::user();
         $dosen = $user->dosen;
 
-        $query = Bimbingan::where('dosen_id', $dosen->id);
+        $query = Bimbingan::where('dosen_id', $dosen->id)->with('academicPeriod');
 
         if ($request->filled('jenis_bimbingan')) {
             $query->where('jenis_bimbingan', $request->jenis_bimbingan);
+        }
+
+        if ($request->filled('academic_period_id')) {
+            $query->where('academic_period_id', $request->academic_period_id);
+        }
+
+        if ($request->filled('semester')) {
+            $query->where('semester', $request->semester);
         }
 
         $bimbingans = $query->orderBy('tahun_akademik', 'desc')
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-        return view('dosen.bimbingan.index', compact('bimbingans'));
+        $periods = AcademicPeriod::orderBy('tahun_awal', 'desc')->get();
+
+        $allBimbingans = Bimbingan::where('dosen_id', $dosen->id)->get();
+
+        return view('dosen.bimbingan.index', compact('bimbingans', 'periods', 'allBimbingans'));
     }
 
     public function create()
