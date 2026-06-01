@@ -17,6 +17,12 @@ class DashboardController extends Controller
     public function index()
     {
         $user = Auth::user();
+
+        // Cek apakah user adalah dosen
+        if (!$user || $user->role !== 'dosen') {
+            return redirect()->route('login')->with('error', 'Akses ditolak.');
+        }
+
         $dosen = $user->dosen;
 
         if (!$dosen) {
@@ -26,7 +32,7 @@ class DashboardController extends Controller
 
         $currentPeriod = AcademicPeriod::where('is_active', true)->first();
 
-        // Stats untuk periode aktif
+        // Stats
         $stats = [
             'total_pengajaran' => Pengajaran::where('dosen_id', $dosen->id)->count(),
             'total_sks' => Pengajaran::where('dosen_id', $dosen->id)->sum('sks'),
@@ -34,19 +40,6 @@ class DashboardController extends Controller
             'total_pkm' => Pkm::where('dosen_id', $dosen->id)->count(),
             'total_bimbingan' => Bimbingan::where('dosen_id', $dosen->id)->count(),
         ];
-
-        // Data periode aktif
-        if ($currentPeriod) {
-            $stats['pengajaran_aktif'] = Pengajaran::where('dosen_id', $dosen->id)
-                ->where('academic_period_id', $currentPeriod->id)
-                ->count();
-            $stats['riset_aktif'] = Riset::where('dosen_id', $dosen->id)
-                ->where('academic_period_id', $currentPeriod->id)
-                ->count();
-            $stats['pkm_aktif'] = Pkm::where('dosen_id', $dosen->id)
-                ->where('academic_period_id', $currentPeriod->id)
-                ->count();
-        }
 
         // Recent data
         $recentPengajaran = Pengajaran::where('dosen_id', $dosen->id)

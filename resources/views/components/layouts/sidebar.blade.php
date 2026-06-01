@@ -1,10 +1,11 @@
 <nav id="sidebar">
     <div class="sidebar-header">
         <div class="logo-icon">
-            <i class="bi bi-graph-up"></i>
+            <img src="{{ asset('img/logo-fakultas-psikologi.jpg') }}" alt="Logo Fakultas Psikologi">
         </div>
         <h3>SIMONKER</h3>
-        <p>Sistem Monitoring Kinerja Dosen</p>
+        <small>Sistem Monitoring Kinerja Dosen</small>
+        <p>Fakultas Psikologi Universitas Islam Bandung</p>
     </div>
 
     <div class="menu-title">MAIN NAVIGATION</div>
@@ -102,11 +103,25 @@
             </li>
         </ul>
 
-        <div class="menu-title">LAPORAN</div>
+        <div class="menu-title">LAPORAN & EVALUASI</div>
         <ul class="components">
             <li class="{{ request()->routeIs('dosen.laporan.*') ? 'active' : '' }}">
                 <a href="{{ route('dosen.laporan.index') }}">
                     <i class="bi bi-file-text"></i> Laporan Saya
+                </a>
+            </li>
+            <li class="{{ request()->routeIs('dosen.evaluasi-kinerja.*') ? 'active' : '' }}">
+                <a href="{{ route('dosen.evaluasi-kinerja.index') }}">
+                    <i class="bi bi-clipboard-check"></i> Evaluasi Kinerja
+                </a>
+            </li>
+        </ul>
+
+        <div class="menu-title">PROFILE</div>
+        <ul class="components">
+            <li class="{{ request()->routeIs('dosen.profile') ? 'active' : '' }}">
+                <a href="{{ route('dosen.profile') }}">
+                    <i class="bi bi-person"></i> Profile Saya
                 </a>
             </li>
         </ul>

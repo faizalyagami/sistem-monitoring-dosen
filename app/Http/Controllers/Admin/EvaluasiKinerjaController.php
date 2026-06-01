@@ -153,9 +153,9 @@ class EvaluasiKinerjaController extends Controller
 
         // Determine status for each category
         $statusPendidikan = $sksPendidikan >= $targetMinimal ? 'M' : 'TM';
-        $statusPenelitian = $sksPenelitian >= 0 ? 'M' : 'TM'; // Boleh kosong
-        $statusPengabdian = $sksPengabdian >= 0 ? 'M' : 'TM'; // Boleh kosong
-        $statusPenunjang = $sksPenunjang >= 0 ? 'M' : 'TM'; // Boleh kosong
+        $statusPenelitian = $sksPenelitian >= 0 ? 'M' : 'TM';
+        $statusPengabdian = $sksPengabdian >= 0 ? 'M' : 'TM';
+        $statusPenunjang = $sksPenunjang >= 0 ? 'M' : 'TM';
         $statusKeseluruhan = $totalSks >= $targetMinimal ? 'M' : 'TM';
 
         // Prepare data for the table

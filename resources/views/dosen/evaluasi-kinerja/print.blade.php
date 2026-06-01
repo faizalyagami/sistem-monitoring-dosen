@@ -19,25 +19,10 @@
             padding-bottom: 10px;
         }
 
-        .header h3 {
-            margin-bottom: 5px;
-        }
-
         .table-bordered td,
         .table-bordered th {
             padding: 8px;
             vertical-align: middle;
-        }
-
-        .badge {
-            font-size: 11px;
-        }
-
-        .info-box {
-            background: #f8f9fa;
-            padding: 10px;
-            margin-bottom: 15px;
-            border-radius: 5px;
         }
 
         @media print {
@@ -48,10 +33,6 @@
 
             .no-print {
                 display: none;
-            }
-
-            .page-break {
-                page-break-before: always;
             }
         }
 
@@ -69,70 +50,44 @@
 
 <body>
     <div class="container">
-        <!-- Header -->
         <div class="header">
-            <h3>LAPORAN KINERJA DOSEN</h3>
+            <h3>EVALUASI KINERJA DOSEN</h3>
             <h5>{{ $period->nama_periode }}</h5>
             <p>{{ $dosen->nama }} ({{ $dosen->nidn }})</p>
         </div>
 
-        <!-- Info -->
-        <div class="info-box">
-            <div class="row">
-                <div class="col-md-4">
-                    <strong>Penarikan Kinerja:</strong><br>
-                    {{ $period->tanggal_mulai ? date('d F Y', strtotime($period->tanggal_mulai)) : '-' }}
-                    s.d {{ $period->tanggal_selesai ? date('d F Y', strtotime($period->tanggal_selesai)) : '-' }}
-                </div>
-                <div class="col-md-4">
-                    <strong>Periode Pengisian:</strong><br>
-                    12 Januari 2026 s.d 31 Mei 2026
-                </div>
-                <div class="col-md-4">
-                    <strong>Periode Penilaian:</strong><br>
-                    12 Januari 2026 s.d 31 Mei 2026
-                </div>
-            </div>
-        </div>
-
-        <!-- Summary Badges -->
+        <!-- Summary Cards -->
         <div class="row mb-3">
             <div class="col-md-3 text-center">
                 <div class="border p-2">
                     <strong>Pendidikan</strong><br>
-                    {{ number_format($evaluasiData['pendidikan']['sks'], 2) }} sks<br>
-                    <span class="badge bg-{{ $evaluasiData['pendidikan']['status'] == 'M' ? 'success' : 'danger' }}">
-                        {{ $evaluasiData['pendidikan']['status'] == 'M' ? 'Memenuhi' : 'Tidak Memenuhi' }}
-                    </span>
+                    {{ number_format($evaluasiData['pendidikan']['sks'], 2) }} sks
                 </div>
             </div>
             <div class="col-md-3 text-center">
                 <div class="border p-2">
                     <strong>Penelitian</strong><br>
-                    {{ number_format($evaluasiData['penelitian']['sks'], 2) }} sks<br>
-                    <span class="badge bg-{{ $evaluasiData['penelitian']['status'] == 'M' ? 'success' : 'danger' }}">
-                        {{ $evaluasiData['penelitian']['status'] == 'M' ? 'Memenuhi' : 'Tidak Memenuhi' }}
-                    </span>
+                    {{ number_format($evaluasiData['penelitian']['sks'], 2) }} sks
                 </div>
             </div>
             <div class="col-md-3 text-center">
                 <div class="border p-2">
                     <strong>Pengabdian</strong><br>
-                    {{ number_format($evaluasiData['pengabdian']['sks'], 2) }} sks<br>
-                    <span class="badge bg-{{ $evaluasiData['pengabdian']['status'] == 'M' ? 'success' : 'danger' }}">
-                        {{ $evaluasiData['pengabdian']['status'] == 'M' ? 'Memenuhi' : 'Tidak Memenuhi' }}
-                    </span>
+                    {{ number_format($evaluasiData['pengabdian']['sks'], 2) }} sks
                 </div>
             </div>
             <div class="col-md-3 text-center">
                 <div class="border p-2">
                     <strong>Penunjang</strong><br>
-                    {{ number_format($evaluasiData['penunjang']['sks'], 2) }} sks<br>
-                    <span class="badge bg-{{ $evaluasiData['penunjang']['status'] == 'M' ? 'success' : 'danger' }}">
-                        {{ $evaluasiData['penunjang']['status'] == 'M' ? 'Memenuhi' : 'Tidak Memenuhi' }}
-                    </span>
+                    {{ number_format($evaluasiData['penunjang']['sks'], 2) }} sks
                 </div>
             </div>
+        </div>
+
+        <!-- Keterangan -->
+        <div class="mb-2">
+            <span class="badge bg-success">M</span> = Memenuhi &nbsp;&nbsp;
+            <span class="badge bg-danger">TM</span> = Tidak Memenuhi
         </div>
 
         <!-- Main Table -->
@@ -151,17 +106,6 @@
                 @foreach ($evaluasiData['kinerja_table'] as $item)
                     <tr>
                         <td>{{ $item['no'] }}</td>
-                        <td>{{ $item['jenis_kinerja'] }}</td>
-                        <td>{{ $item['syarat'] }}</td>
-                        <td>{{ $item['sks_bkd'] }}</td>
-                        <td>{{ $item['sks_lebih'] }}</td>
-                        <td class="text-center">{{ $item['status'] }}</td>
-                    </tr>
-                @endforeach
-
-                @foreach ($evaluasiData['criteria_rows'] as $item)
-                    <tr>
-                        <td>—</td>
                         <td>{{ $item['jenis_kinerja'] }}</td>
                         <td>{{ $item['syarat'] }}</td>
                         <td>{{ $item['sks_bkd'] }}</td>
@@ -195,12 +139,13 @@
                 <div class="col-md-4 text-center">
                     <p>Mengetahui,<br>Dekan Fakultas Psikologi</p>
                     <br><br>
-                    <p>(Dr. Dewi Rosiana, M.Psi., Psikolog.)</p>
+                    <p>(_____________________)</p>
                 </div>
+
                 <div class="col-md-4 text-center">
                     <p>{{ $dosen->nama }}<br>Dosen Bersangkutan</p>
                     <br><br>
-                    <p>({{ $dosen->nama }})</p>
+                    <p>(_____________________)</p>
                 </div>
             </div>
         </div>
