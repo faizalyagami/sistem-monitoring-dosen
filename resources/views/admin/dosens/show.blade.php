@@ -1,5 +1,8 @@
-{{-- resources/views/admin/dosens/show.blade.php --}}
-<x-layouts.app title="Detail Dosen - {{ $dosen->nama }}">
+@extends('components.layouts.app')
+
+@section('title', 'Detail Dosen - ' . $dosen->nama)
+
+@section('content')
     <div class="container-fluid">
         <div class="d-flex align-items-center mb-4">
             <a href="{{ route('admin.dosens.index') }}" class="btn btn-outline-secondary me-3">
@@ -83,11 +86,39 @@
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
-                                        <h6 class="card-title">Bimbingan & Pelatihan</h6>
-                                        <h3>{{ $stats['total_bimbingan'] + $stats['total_pelatihan'] }}</h3>
-                                        <small>{{ $stats['total_bimbingan'] }} bimbingan</small>
+                                        <h6 class="card-title">Total Bimbingan</h6>
+                                        <h3>{{ $stats['total_bimbingan'] }}</h3>
+                                        <small>Mahasiswa bimbingan</small>
                                     </div>
                                     <i class="bi bi-chat-dots fs-1 opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-danger text-white">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="card-title">Total Pelatihan</h6>
+                                        <h3>{{ $stats['total_pelatihan'] }}</h3>
+                                        <small>Sertifikat pelatihan</small>
+                                    </div>
+                                    <i class="bi bi-mortarboard fs-1 opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-secondary text-white">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="card-title">Total Sertifikasi</h6>
+                                        <h3>{{ $stats['total_sertifikasi'] ?? 0 }}</h3>
+                                        <small>Sertifikat kompetensi</small>
+                                    </div>
+                                    <i class="bi bi-patch-check fs-1 opacity-50"></i>
                                 </div>
                             </div>
                         </div>
@@ -134,5 +165,42 @@
                 </div>
             </div>
         </div>
+
+        <!-- Research History -->
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-mortarboard me-2"></i> Riwayat Penelitian
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Judul Penelitian</th>
+                                <th>Bidang</th>
+                                <th>Tahun</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($dosen->risets as $riset)
+                                <tr>
+                                    <td>{{ Str::limit($riset->judul_riset, 50) }}</td>
+                                    <td>{{ $riset->bidang_riset }}</td>
+                                    <td>{{ $riset->tahun }}</td>
+                                    <td>{{ ucfirst($riset->status) }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="text-center">Belum ada data penelitian</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
-</x-layouts.app>
+@endsection
