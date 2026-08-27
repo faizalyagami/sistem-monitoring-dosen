@@ -22,6 +22,7 @@ class Dosen extends Model
         'jabatan_fungsional',
         'inpassing',
         'kepangkatan',
+        'bidang_keahlian'
     ];
 
     protected $casts = [
@@ -102,6 +103,21 @@ class Dosen extends Model
 
         $color = $badges[$this->status] ?? 'secondary';
         return "<span class='badge bg-{$color}'>{$this->status}</span>";
+    }
+
+    public function getBidangKeahlianBadgeAttribute()
+    {
+        $colors = [
+            'Psikologi Klinis' => 'primary',
+            'Psikologi Pendidikan' => 'success',
+            'Psikologi Industri' => 'info',
+            'Psikologi Perkembangan' => 'warning',
+            'Psikologi Sosial' => 'danger',
+            'Psikometri' => 'secondary',
+        ];
+
+        $color = $colors[$this->bidang_keahlian] ?? 'secondary';
+        return "<span class='badge bg-{$color}'>{$this->bidang_keahlian}</span>";
     }
 
 

@@ -16,10 +16,16 @@ return new class extends Migration
             $table->string('no_registrasi');
             $table->string('bidang_keilmuan');
             $table->year('tahun_terbit');
-            $table->enum('status', ['aktif', 'tidak_aktif'])->default('aktif');
+            $table->string('penerbit')->nullable();
+            $table->string('file_sipp')->nullable();
+            $table->enum('status', ['aktif', 'kadaluarsa', 'dicabut'])->default('aktif');
+            $table->date('tanggal_terbit');
+            $table->date('tanggal_kadaluarsa')->nullable();
+            $table->text('keterangan');
             $table->timestamps();
 
             $table->index('dosen_id');
+            $table->index('no_registrasi');
         });
     }
 

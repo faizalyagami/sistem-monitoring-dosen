@@ -19,6 +19,10 @@ class DatabaseSeeder extends Seeder
             RisetSeeder::class,
             PkmSeeder::class,
             BimbinganSeeder::class,
+            PelatihanSeeder::class,
+            SippSeeder::class,
+            AsosiasiSeeder::class,
+            SertifikasiSeeder::class
         ]);
 
         $this->command->info('Semua seeder berhasil dijalankan!');

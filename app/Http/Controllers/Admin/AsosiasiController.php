@@ -57,6 +57,12 @@ class AsosiasiController extends Controller
         return view('admin.asosiasi.edit', compact('asosiasi', 'dosens', 'periods'));
     }
 
+    public function show($id)
+    {
+        $asosiasi = Asosiasi::with(['dosen', 'academicPeriod'])->findOrFail($id);
+        return view('admin.asosiasi.show', compact('asosiasi'));
+    }
+
     public function update(Request $request, $id)
     {
         $asosiasi = Asosiasi::findOrFail($id);

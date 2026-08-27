@@ -1,15 +1,15 @@
 @extends('components.layouts.app')
 
-@section('title', 'SIPP')
+@section('title', 'SIPP - Surat Izin Praktik Psikologi')
 
 @section('content')
     <div class="container-fluid px-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
                 <h1 class="h3 mb-0 text-gray-800">
-                    <i class="bi bi-award"></i> SIPP (Sertifikat Pendidik Profesional)
+                    <i class="bi bi-award"></i> Surat Izin Praktik Psikologi (SIPP)
                 </h1>
-                <p class="text-muted">Kelola data Sertifikat Pendidik Profesional dosen</p>
+                <p class="text-muted">Kelola data Surat Izin Praktik Psikologi (SIPP) untuk Psikolog</p>
             </div>
             <a href="{{ route('admin.sipp.create') }}" class="btn btn-primary">
                 <i class="bi bi-plus-circle"></i> Tambah SIPP
@@ -20,7 +20,7 @@
         <div class="card shadow-sm mb-4">
             <div class="card-body">
                 <form method="GET" action="{{ route('admin.sipp.index') }}" class="row g-3">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <label class="form-label fw-bold">Dosen</label>
                         <select name="dosen_id" class="form-select">
                             <option value="">Semua Dosen</option>
@@ -32,7 +32,17 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-4 d-flex align-items-end">
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Status</label>
+                        <select name="status" class="form-select">
+                            <option value="">Semua Status</option>
+                            <option value="aktif" {{ request('status') == 'aktif' ? 'selected' : '' }}>Aktif</option>
+                            <option value="kadaluarsa" {{ request('status') == 'kadaluarsa' ? 'selected' : '' }}>Kadaluarsa
+                            </option>
+                            <option value="dicabut" {{ request('status') == 'dicabut' ? 'selected' : '' }}>Dicabut</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
                         <button type="submit" class="btn btn-primary w-100">
                             <i class="bi bi-search"></i> Filter
                         </button>
@@ -52,7 +62,9 @@
                                 <th>Dosen</th>
                                 <th>No. Registrasi</th>
                                 <th>Bidang Keilmuan</th>
+                                <th>Penerbit</th>
                                 <th>Tahun Terbit</th>
+                                <th>Tanggal Kadaluarsa</th>
                                 <th>Status</th>
                                 <th width="100">Aksi</th>
                             </tr>
@@ -67,11 +79,23 @@
                                         <small class="text-muted">{{ $sipp->dosen->nidn ?? '-' }}</small>
                                     </td>
                                     <td><code>{{ $sipp->no_registrasi }}</code></td>
-                                    <td>{{ $sipp->bidang_keilmuan }}</td>
-                                    <td>{{ $sipp->tahun_terbit }}</td>
-                                    <td>{!! $sipp->status_badge !!}</td>
+                                    <td>{{ $sipp->bidang_keilmuan }}</span></td>
+                                    <td>{{ $sipp->penerbit ?? '-' }}</span></td>
+                                    <td>{{ $sipp->tahun_terbit }}</span></td>
+                                    <td>
+                                        @if ($sipp->tanggal_kadaluarsa)
+                                            {{ date('d/m/Y', strtotime($sipp->tanggal_kadaluarsa)) }}
+                                        @else
+                                            -
+                                        @endif
+                                    </td>
+                                    <td>{!! $sipp->status_badge !!}</span></td>
                                     <td>
                                         <div class="btn-group btn-group-sm">
+                                            <a href="{{ route('admin.sipp.show', $sipp->id) }}" class="btn btn-info"
+                                                title="Detail">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
                                             <a href="{{ route('admin.sipp.edit', $sipp->id) }}" class="btn btn-warning"
                                                 title="Edit">
                                                 <i class="bi bi-pencil"></i>
@@ -91,9 +115,9 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" class="text-center py-5">
+                                    <td colspan="9" class="text-center py-5">
                                         <i class="bi bi-inbox fs-1 text-muted"></i>
-                                        <p class="mt-2 text-muted">Belum ada data SIPP</p>
+                                        <p class="mt-2 text-muted">Belum ada data SIPP (Surat Izin Praktik Psikologi)</p>
                                         <a href="{{ route('admin.sipp.create') }}" class="btn btn-sm btn-primary">
                                             Tambah SIPP
                                         </a>
@@ -114,7 +138,7 @@
         function confirmDelete(id) {
             Swal.fire({
                 title: 'Apakah Anda yakin?',
-                text: "Data yang dihapus tidak dapat dikembalikan!",
+                text: "Data SIPP yang dihapus tidak dapat dikembalikan!",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#d33',

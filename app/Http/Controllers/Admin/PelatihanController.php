@@ -1,4 +1,5 @@
 <?php
+// app/Http/Controllers/Admin/PelatihanController.php
 
 namespace App\Http\Controllers\Admin;
 
@@ -15,22 +16,37 @@ class PelatihanController extends Controller
     {
         $query = Pelatihan::with(['dosen', 'academicPeriod']);
 
+        // Filter by dosen
         if ($request->filled('dosen_id')) {
             $query->where('dosen_id', $request->dosen_id);
         }
 
-        $pelatihans = $query->latest()->paginate(10);
-        $dosens = Dosen::all();
-        $periods = AcademicPeriod::orderBy('tahun_awal', 'desc')->get();
+        // Filter by tahun
+        if ($request->filled('tahun')) {
+            $query->where('tahun', $request->tahun);
+        }
 
-        return view('admin.pelatihan.index', compact('pelatihans', 'dosens', 'periods'));
+        $pelatihans = $query->latest()->paginate(10);
+
+        // Ambil data untuk filter
+        $dosens = Dosen::orderBy('nama')->get();
+
+        // TAMBAHKAN $tahunList untuk filter tahun
+        $tahunList = Pelatihan::select('tahun')
+            ->distinct()
+            ->orderBy('tahun', 'desc')
+            ->pluck('tahun');
+
+        return view('admin.pelatihan.index', compact('pelatihans', 'dosens', 'tahunList'));
     }
 
     public function create()
     {
         $dosens = Dosen::all();
         $periods = AcademicPeriod::orderBy('tahun_awal', 'desc')->get();
-        return view('admin.pelatihan.create', compact('dosens', 'periods'));
+        $activePeriod = AcademicPeriod::where('is_active', true)->first();
+
+        return view('admin.pelatihan.create', compact('dosens', 'periods', 'activePeriod'));
     }
 
     public function store(Request $request)
@@ -62,7 +78,14 @@ class PelatihanController extends Controller
         $pelatihan = Pelatihan::findOrFail($id);
         $dosens = Dosen::all();
         $periods = AcademicPeriod::orderBy('tahun_awal', 'desc')->get();
+
         return view('admin.pelatihan.edit', compact('pelatihan', 'dosens', 'periods'));
+    }
+
+    public function show($id)
+    {
+        $pelatihan = Pelatihan::with(['dosen', 'academicPeriod'])->findOrFail($id);
+        return view('admin.pelatihan.show', compact('pelatihan'));
     }
 
     public function update(Request $request, $id)
@@ -112,6 +135,12 @@ class PelatihanController extends Controller
         if ($pelatihan->file_sertifikat && Storage::disk('public')->exists($pelatihan->file_sertifikat)) {
             return Storage::disk('public')->download($pelatihan->file_sertifikat);
         }
-        return redirect()->back()->with('error', 'File tidak ditemukan');
+        return redirect()->back()->with('error', 'File sertifikat tidak ditemukan');
+    }
+
+    // TAMBAHKAN METHOD EXPORT
+    public function export(Request $request)
+    {
+        return redirect()->back()->with('info', 'Fitur export sedang dalam pengembangan');
     }
 }

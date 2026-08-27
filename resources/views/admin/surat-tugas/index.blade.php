@@ -84,6 +84,10 @@
                                     </td>
                                     <td>
                                         <div class="btn-group btn-group-sm">
+                                            <a href="{{ route('admin.surat-tugas.show', $surat - tugas->id) }}"
+                                                class="btn btn-info" title="Detail">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
                                             <a href="{{ route('admin.surat-tugas.edit', $surat->id) }}"
                                                 class="btn btn-warning" title="Edit">
                                                 <i class="bi bi-pencil"></i>

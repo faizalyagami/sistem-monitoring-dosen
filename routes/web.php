@@ -116,6 +116,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     Route::resource('sertifikasi', SertifikasiController::class);
     Route::get('/sertifikasi/download/{id}', [SertifikasiController::class, 'download'])->name('sertifikasi.download');
 
+    Route::resource('pelatihan', PelatihanController::class);
+    Route::get('/pelatihan/export', [PelatihanController::class, 'export'])->name('pelatihan.export');
+    Route::get('/pelatihan/download/{id}', [PelatihanController::class, 'download'])->name('pelatihan.download');
+
     // Periode Akademik
     Route::resource('periods', PeriodController::class);
     Route::post('/periods/{period}/set-active', [PeriodController::class, 'setActive'])->name('periods.set-active');

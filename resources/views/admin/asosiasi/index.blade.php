@@ -75,6 +75,10 @@
                                     <td>{{ $asosiasi->academicPeriod->nama_periode ?? '-' }}</td>
                                     <td>
                                         <div class="btn-group btn-group-sm">
+                                            <a href="{{ route('admin.asosiasi.show', $asosiasi->id) }}"
+                                                class="btn btn-info" title="Detail">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
                                             <a href="{{ route('admin.asosiasi.edit', $asosiasi->id) }}"
                                                 class="btn btn-warning" title="Edit">
                                                 <i class="bi bi-pencil"></i>

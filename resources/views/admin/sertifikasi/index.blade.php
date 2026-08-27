@@ -20,7 +20,7 @@
         <div class="card shadow-sm mb-4">
             <div class="card-body">
                 <form method="GET" action="{{ route('admin.sertifikasi.index') }}" class="row g-3">
-                    <div class="col-md-6">
+                    <div class="col-md-5">
                         <label class="form-label fw-bold">Dosen</label>
                         <select name="dosen_id" class="form-select">
                             <option value="">Semua Dosen</option>
@@ -32,7 +32,18 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-4 d-flex align-items-end">
+                    <div class="col-md-5">
+                        <label class="form-label fw-bold">Tahun</label>
+                        <select name="tahun" class="form-select">
+                            <option value="">Semua Tahun</option>
+                            @foreach ($tahunList as $tahun)
+                                <option value="{{ $tahun }}" {{ request('tahun') == $tahun ? 'selected' : '' }}>
+                                    {{ $tahun }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
                         <button type="submit" class="btn btn-primary w-100">
                             <i class="bi bi-search"></i> Filter
                         </button>
@@ -73,9 +84,8 @@
                                     <td>{{ $sertifikasi->lembaga_sertifikasi }}</td>
                                     <td><code>{{ $sertifikasi->nomor_sertifikasi }}</code></td>
                                     <td>{{ $sertifikasi->tanggal_sertifikasi ? date('d/m/Y', strtotime($sertifikasi->tanggal_sertifikasi)) : '-' }}
-                                    </td>
                                     <td>{{ $sertifikasi->valid_until ? date('d/m/Y', strtotime($sertifikasi->valid_until)) : '-' }}
-                                    </td>
+
                                     <td>{!! $sertifikasi->status !!}</td>
                                     <td>
                                         @if ($sertifikasi->file_sertifikat)
@@ -89,6 +99,10 @@
                                     </td>
                                     <td>
                                         <div class="btn-group btn-group-sm">
+                                            <a href="{{ route('admin.sertifikasi.show', $sertifikasi->id) }}"
+                                                class="btn btn-info" title="Detail">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
                                             <a href="{{ route('admin.sertifikasi.edit', $sertifikasi->id) }}"
                                                 class="btn btn-warning" title="Edit">
                                                 <i class="bi bi-pencil"></i>
@@ -114,18 +128,153 @@
                                         <a href="{{ route('admin.sertifikasi.create') }}" class="btn btn-sm btn-primary">
                                             Tambah Sertifikasi
                                         </a>
-                                <tr>
+                                    </td>
                                 </tr>
                             @endforelse
                         </tbody>
                     </table>
                 </div>
             </div>
-            <div class="card-footer bg-white">
-                {{ $sertifikasis->withQueryString()->links() }}
+
+            <!-- PAGINATION YANG DIPERBAIKI -->
+            <div class="card-footer bg-white py-3">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <div class="text-muted small">
+                            <i class="bi bi-info-circle"></i>
+                            Menampilkan <strong>{{ $sertifikasis->firstItem() ?? 0 }}</strong> -
+                            <strong>{{ $sertifikasis->lastItem() ?? 0 }}</strong>
+                            dari <strong>{{ $sertifikasis->total() }}</strong> data
+                            @if ($sertifikasis->total() > 0)
+                                <span class="ms-2">
+                                    (Halaman <strong>{{ $sertifikasis->currentPage() }}</strong> dari
+                                    <strong>{{ $sertifikasis->lastPage() }}</strong>)
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex justify-content-end">
+                            @if ($sertifikasis->hasPages())
+                                <nav aria-label="Page navigation">
+                                    <ul class="pagination pagination-sm mb-0">
+                                        {{-- Previous Page Link --}}
+                                        @if ($sertifikasis->onFirstPage())
+                                            <li class="page-item disabled">
+                                                <span class="page-link"><i class="bi bi-chevron-left"></i></span>
+                                            </li>
+                                        @else
+                                            <li class="page-item">
+                                                <a class="page-link" href="{{ $sertifikasis->previousPageUrl() }}"
+                                                    rel="prev">
+                                                    <i class="bi bi-chevron-left"></i>
+                                                </a>
+                                            </li>
+                                        @endif
+
+                                        {{-- Pagination Elements --}}
+                                        @php
+                                            $start = max(1, $sertifikasis->currentPage() - 2);
+                                            $end = min($sertifikasis->lastPage(), $sertifikasis->currentPage() + 2);
+                                        @endphp
+
+                                        @if ($start > 1)
+                                            <li class="page-item">
+                                                <a class="page-link" href="{{ $sertifikasis->url(1) }}">1</a>
+                                            </li>
+                                            @if ($start > 2)
+                                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                                            @endif
+                                        @endif
+
+                                        @for ($i = $start; $i <= $end; $i++)
+                                            @if ($i == $sertifikasis->currentPage())
+                                                <li class="page-item active" aria-current="page">
+                                                    <span class="page-link">{{ $i }}</span>
+                                                </li>
+                                            @else
+                                                <li class="page-item">
+                                                    <a class="page-link"
+                                                        href="{{ $sertifikasis->url($i) }}">{{ $i }}</a>
+                                                </li>
+                                            @endif
+                                        @endfor
+
+                                        @if ($end < $sertifikasis->lastPage())
+                                            @if ($end < $sertifikasis->lastPage() - 1)
+                                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                                            @endif
+                                            <li class="page-item">
+                                                <a class="page-link"
+                                                    href="{{ $sertifikasis->url($sertifikasis->lastPage()) }}">{{ $sertifikasis->lastPage() }}</a>
+                                            </li>
+                                        @endif
+
+                                        {{-- Next Page Link --}}
+                                        @if ($sertifikasis->hasMorePages())
+                                            <li class="page-item">
+                                                <a class="page-link" href="{{ $sertifikasis->nextPageUrl() }}"
+                                                    rel="next">
+                                                    <i class="bi bi-chevron-right"></i>
+                                                </a>
+                                            </li>
+                                        @else
+                                            <li class="page-item disabled">
+                                                <span class="page-link"><i class="bi bi-chevron-right"></i></span>
+                                            </li>
+                                        @endif
+                                    </ul>
+                                </nav>
+                            @endif
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+
+    <style>
+        .pagination {
+            margin-bottom: 0;
+            gap: 5px;
+        }
+
+        .page-item .page-link {
+            border-radius: 8px;
+            color: #28a745;
+            border: 1px solid #e0e0e0;
+            padding: 6px 12px;
+            font-size: 0.875rem;
+            transition: all 0.3s;
+        }
+
+        .page-item .page-link:hover {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border-color: transparent;
+            transform: translateY(-2px);
+        }
+
+        .page-item.active .page-link {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            border-color: transparent;
+            color: white;
+        }
+
+        .page-item.disabled .page-link {
+            color: #adb5bd;
+            background-color: #f8f9fa;
+            border-color: #e9ecef;
+            transform: none;
+        }
+
+        /* Table styles */
+        .table td,
+        .table th {
+            vertical-align: middle;
+            padding: 12px 8px;
+        }
+    </style>
 
     <script>
         function confirmDelete(id) {

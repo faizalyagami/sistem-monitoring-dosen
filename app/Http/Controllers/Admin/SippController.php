@@ -52,6 +52,12 @@ class SippController extends Controller
         return view('admin.sipp.edit', compact('sipp', 'dosens'));
     }
 
+    public function show($id)
+    {
+        $sipp = Sipp::with('dosen')->findOrFail($id);
+        return view('admin.sipp.show', compact('sipp'));
+    }
+
     public function update(Request $request, $id)
     {
         $sipp = Sipp::findOrFail($id);

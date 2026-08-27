@@ -448,10 +448,10 @@
                     <div class="demo-badge" onclick="fillDemo('admin@unisba.ac.id', 'password123')">
                         <i class="bi bi-shield-lock"></i> <strong>Admin</strong>
                     </div>
-                    <div class="demo-badge" onclick="fillDemo('ahmad.rizal@university.ac.id', 'password123')">
+                    <div class="demo-badge" onclick="fillDemo('siti.nurhayati@unisba.ac.id', 'password123')">
                         <i class="bi bi-person-badge"></i> <strong>Dosen 1</strong>
                     </div>
-                    <div class="demo-badge" onclick="fillDemo('siti.nurhaliza@university.ac.id', 'password123')">
+                    <div class="demo-badge" onclick="fillDemo('ahmad.rizal@unisba.ac.id', 'password123')">
                         <i class="bi bi-person-badge"></i> <strong>Dosen 2</strong>
                     </div>
                 </div>

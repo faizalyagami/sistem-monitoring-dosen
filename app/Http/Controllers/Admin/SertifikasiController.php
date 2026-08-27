@@ -23,7 +23,12 @@ class SertifikasiController extends Controller
         $dosens = Dosen::all();
         $periods = AcademicPeriod::orderBy('tahun_awal', 'desc')->get();
 
-        return view('admin.sertifikasi.index', compact('sertifikasis', 'dosens', 'periods'));
+        $tahunList = Sertifikasi::selectRaw('YEAR(tanggal_sertifikasi) as tahun')
+            ->distinct()
+            ->orderBy('tahun', 'desc')
+            ->pluck('tahun');
+
+        return view('admin.sertifikasi.index', compact('sertifikasis', 'dosens', 'periods', 'tahunList'));
     }
 
     public function create()
@@ -62,6 +67,12 @@ class SertifikasiController extends Controller
         $dosens = Dosen::all();
         $periods = AcademicPeriod::orderBy('tahun_awal', 'desc')->get();
         return view('admin.sertifikasi.edit', compact('sertifikasi', 'dosens', 'periods'));
+    }
+
+    public function show($id)
+    {
+        $sertifikasi = Sertifikasi::with(['dosen', 'academicPeriod'])->findOrFail($id);
+        return view('admin.sertifikasi.show', compact('sertifikasi'));
     }
 
     public function update(Request $request, $id)

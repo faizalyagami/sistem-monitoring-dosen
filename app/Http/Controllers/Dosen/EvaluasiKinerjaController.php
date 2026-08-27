@@ -8,6 +8,10 @@ use App\Models\Pengajaran;
 use App\Models\Riset;
 use App\Models\Pkm;
 use App\Models\Bimbingan;
+use App\Models\Pelatihan;
+use App\Models\Sertifikasi;
+use App\Models\Asosiasi;
+use App\Models\Sipp;
 use App\Models\AcademicPeriod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -59,6 +63,41 @@ class EvaluasiKinerjaController extends Controller
             ->where('academic_period_id', $period->id)
             ->get();
 
+        // ========== PENGEMBANGAN PROFESI ==========
+        // Pelatihan
+        $pelatihans = Pelatihan::where('dosen_id', $dosen->id)
+            ->where('academic_period_id', $period->id)
+            ->get();
+
+        $sksPelatihan = 0;
+        foreach ($pelatihans as $pelatihan) {
+            $sks = $pelatihan->durasi ? $pelatihan->durasi / 8 : 1;
+            $sksPelatihan += $sks;
+        }
+
+        // Sertifikasi
+        $sertifikasis = Sertifikasi::where('dosen_id', $dosen->id)
+            ->where('academic_period_id', $period->id)
+            ->get();
+        $sksSertifikasi = $sertifikasis->count() * 1;
+
+        // Asosiasi
+        $asosiasis = Asosiasi::where('dosen_id', $dosen->id)
+            ->where('academic_period_id', $period->id)
+            ->get();
+        $sksAsosiasi = $asosiasis->count() * 0.5;
+
+        // SIPP
+        $sipps = Sipp::where('dosen_id', $dosen->id)->get();
+        $sksSipp = 0;
+        foreach ($sipps as $sipp) {
+            if ($sipp->status == 'aktif') {
+                $sksSipp = 2;
+            }
+        }
+
+        $sksPengembangan = $sksPelatihan + $sksSertifikasi + $sksAsosiasi + $sksSipp;
+
         // Calculate SKS
         $sksPendidikan = $pengajarans->sum('sks');
         foreach ($bimbingans as $bimbingan) {
@@ -83,7 +122,7 @@ class EvaluasiKinerjaController extends Controller
 
         $sksPenunjang = 0.75;
         $targetMinimal = 3;
-        $totalSks = $sksPendidikan + $sksPenelitian + $sksPengabdian + $sksPenunjang;
+        $totalSks = $sksPendidikan + $sksPenelitian + $sksPengabdian + $sksPenunjang + $sksPengembangan;
 
         $kinerjaTable = [
             [
@@ -118,6 +157,14 @@ class EvaluasiKinerjaController extends Controller
                 'sks_lebih' => '0',
                 'status' => 'M'
             ],
+            [
+                'no' => 5,
+                'jenis_kinerja' => 'Pengembangan Profesi',
+                'syarat' => 'Boleh Kosong',
+                'sks_bkd' => number_format($sksPengembangan, 2),
+                'sks_lebih' => '0',
+                'status' => 'M'
+            ],
         ];
 
         $summaryRow = [
@@ -128,11 +175,19 @@ class EvaluasiKinerjaController extends Controller
             'status' => $totalSks >= $targetMinimal ? 'M' : 'TM'
         ];
 
+        $detailPengembangan = [
+            'pelatihan' => ['jumlah' => $pelatihans->count(), 'sks' => number_format($sksPelatihan, 2)],
+            'sertifikasi' => ['jumlah' => $sertifikasis->count(), 'sks' => number_format($sksSertifikasi, 2)],
+            'asosiasi' => ['jumlah' => $asosiasis->count(), 'sks' => number_format($sksAsosiasi, 2)],
+            'sipp' => ['status' => $sksSipp > 0 ? 'Aktif' : 'Tidak Ada', 'sks' => number_format($sksSipp, 2)]
+        ];
+
         return [
             'pendidikan' => ['sks' => $sksPendidikan],
             'penelitian' => ['sks' => $sksPenelitian],
             'pengabdian' => ['sks' => $sksPengabdian],
             'penunjang' => ['sks' => $sksPenunjang],
+            'pengembangan' => ['sks' => $sksPengembangan, 'detail' => $detailPengembangan],
             'kinerja_table' => $kinerjaTable,
             'summary_row' => $summaryRow,
             'total_sks' => $totalSks,
