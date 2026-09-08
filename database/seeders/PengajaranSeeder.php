@@ -16,56 +16,63 @@ class PengajaranSeeder extends Seeder
 
         $pengajarans = [];
 
-        // Mata Kuliah Psikologi
-        $courses = [
-            // Psikologi Klinis
-            ['kode_mk' => 'PSI101', 'nama_mk' => 'Psikologi Klinis Dasar', 'bidang' => 'Psikologi Klinis', 'sks' => 3],
-            ['kode_mk' => 'PSI102', 'nama_mk' => 'Psikopatologi', 'bidang' => 'Psikologi Klinis', 'sks' => 3],
-            ['kode_mk' => 'PSI103', 'nama_mk' => 'Psikoterapi', 'bidang' => 'Psikologi Klinis', 'sks' => 4],
-            ['kode_mk' => 'PSI104', 'nama_mk' => 'Tes Psikologi', 'bidang' => 'Psikologi Klinis', 'sks' => 3],
-
-            // Psikologi Pendidikan
-            ['kode_mk' => 'PSI201', 'nama_mk' => 'Psikologi Pendidikan', 'bidang' => 'Psikologi Pendidikan', 'sks' => 3],
-            ['kode_mk' => 'PSI202', 'nama_mk' => 'Psikologi Belajar', 'bidang' => 'Psikologi Pendidikan', 'sks' => 3],
-            ['kode_mk' => 'PSI203', 'nama_mk' => 'Bimbingan Konseling', 'bidang' => 'Psikologi Pendidikan', 'sks' => 4],
-            ['kode_mk' => 'PSI204', 'nama_mk' => 'Psikologi Anak Berkebutuhan Khusus', 'bidang' => 'Psikologi Pendidikan', 'sks' => 3],
-
-            // Psikologi Industri
-            ['kode_mk' => 'PSI301', 'nama_mk' => 'Psikologi Industri', 'bidang' => 'Psikologi Industri', 'sks' => 3],
-            ['kode_mk' => 'PSI302', 'nama_mk' => 'Psikologi Sumber Daya Manusia', 'bidang' => 'Psikologi Industri', 'sks' => 3],
-            ['kode_mk' => 'PSI303', 'nama_mk' => 'Perilaku Organisasi', 'bidang' => 'Psikologi Industri', 'sks' => 3],
-
-            // Psikologi Perkembangan
-            ['kode_mk' => 'PSI401', 'nama_mk' => 'Psikologi Perkembangan', 'bidang' => 'Psikologi Perkembangan', 'sks' => 3],
-            ['kode_mk' => 'PSI402', 'nama_mk' => 'Psikologi Anak', 'bidang' => 'Psikologi Perkembangan', 'sks' => 3],
-            ['kode_mk' => 'PSI403', 'nama_mk' => 'Psikologi Remaja', 'bidang' => 'Psikologi Perkembangan', 'sks' => 2],
-            ['kode_mk' => 'PSI404', 'nama_mk' => 'Psikologi Dewasa dan Lansia', 'bidang' => 'Psikologi Perkembangan', 'sks' => 3],
-
-            // Psikologi Sosial
-            ['kode_mk' => 'PSI501', 'nama_mk' => 'Psikologi Sosial', 'bidang' => 'Psikologi Sosial', 'sks' => 3],
-            ['kode_mk' => 'PSI502', 'nama_mk' => 'Dinamika Kelompok', 'bidang' => 'Psikologi Sosial', 'sks' => 2],
-            ['kode_mk' => 'PSI503', 'nama_mk' => 'Psikologi Lintas Budaya', 'bidang' => 'Psikologi Sosial', 'sks' => 3],
-
-            // Mata Kuliah Umum
-            ['kode_mk' => 'PSI601', 'nama_mk' => 'Metodologi Penelitian Psikologi', 'bidang' => 'Metodologi', 'sks' => 4],
-            ['kode_mk' => 'PSI602', 'nama_mk' => 'Statistik Psikologi', 'bidang' => 'Metodologi', 'sks' => 3],
-            ['kode_mk' => 'PSI603', 'nama_mk' => 'Etika Profesi Psikologi', 'bidang' => 'Profesi', 'sks' => 2],
-        ];
-
         // Semester Ganjil 2024/2025 (periode aktif)
         $activePeriod = $periods->where('is_active', true)->first();
 
-        if ($activePeriod) {
-            foreach ($dosens as $index => $dosen) {
-                $assignedCourses = array_slice($courses, ($index * 2) % count($courses), 2);
-                foreach ($assignedCourses as $course) {
+        // Data pengajaran untuk setiap dosen
+        foreach ($dosens as $index => $dosen) {
+            $courses = [
+                0 => [ // Untuk dosen 1
+                    ['kode_mk' => 'IF101', 'nama_mk' => 'Algoritma dan Pemrograman', 'sks' => 3, 'jumlah_mahasiswa' => 45],
+                    ['kode_mk' => 'IF102', 'nama_mk' => 'Struktur Data', 'sks' => 3, 'jumlah_mahasiswa' => 40],
+                ],
+                1 => [
+                    ['kode_mk' => 'IF201', 'nama_mk' => 'Basis Data', 'sks' => 3, 'jumlah_mahasiswa' => 50],
+                    ['kode_mk' => 'IF202', 'nama_mk' => 'Sistem Informasi', 'sks' => 2, 'jumlah_mahasiswa' => 45],
+                ],
+                2 => [
+                    ['kode_mk' => 'IF301', 'nama_mk' => 'Jaringan Komputer', 'sks' => 3, 'jumlah_mahasiswa' => 35],
+                    ['kode_mk' => 'IF302', 'nama_mk' => 'Keamanan Komputer', 'sks' => 2, 'jumlah_mahasiswa' => 30],
+                ],
+                3 => [
+                    ['kode_mk' => 'IF401', 'nama_mk' => 'Pemrograman Web', 'sks' => 3, 'jumlah_mahasiswa' => 55],
+                    ['kode_mk' => 'IF402', 'nama_mk' => 'Pemrograman Mobile', 'sks' => 3, 'jumlah_mahasiswa' => 40],
+                ],
+                4 => [
+                    ['kode_mk' => 'IF501', 'nama_mk' => 'Kecerdasan Buatan', 'sks' => 3, 'jumlah_mahasiswa' => 25],
+                    ['kode_mk' => 'IF502', 'nama_mk' => 'Machine Learning', 'sks' => 3, 'jumlah_mahasiswa' => 20],
+                ],
+                5 => [
+                    ['kode_mk' => 'IF601', 'nama_mk' => 'Metodologi Penelitian', 'sks' => 2, 'jumlah_mahasiswa' => 60],
+                    ['kode_mk' => 'IF602', 'nama_mk' => 'Statistika', 'sks' => 2, 'jumlah_mahasiswa' => 55],
+                ],
+                6 => [
+                    ['kode_mk' => 'IF701', 'nama_mk' => 'Manajemen Proyek', 'sks' => 2, 'jumlah_mahasiswa' => 35],
+                    ['kode_mk' => 'IF702', 'nama_mk' => 'E-Business', 'sks' => 3, 'jumlah_mahasiswa' => 30],
+                ],
+                7 => [
+                    ['kode_mk' => 'IF801', 'nama_mk' => 'Audit Sistem Informasi', 'sks' => 3, 'jumlah_mahasiswa' => 28],
+                    ['kode_mk' => 'IF802', 'nama_mk' => 'Tata Kelola TI', 'sks' => 2, 'jumlah_mahasiswa' => 25],
+                ],
+                8 => [
+                    ['kode_mk' => 'IF901', 'nama_mk' => 'Interaksi Manusia Komputer', 'sks' => 2, 'jumlah_mahasiswa' => 42],
+                    ['kode_mk' => 'IF902', 'nama_mk' => 'Desain UX', 'sks' => 3, 'jumlah_mahasiswa' => 38],
+                ],
+                9 => [
+                    ['kode_mk' => 'IF1001', 'nama_mk' => 'Sistem Terdistribusi', 'sks' => 3, 'jumlah_mahasiswa' => 22],
+                    ['kode_mk' => 'IF1002', 'nama_mk' => 'Cloud Computing', 'sks' => 3, 'jumlah_mahasiswa' => 18],
+                ],
+            ];
+
+            if (isset($courses[$index])) {
+                foreach ($courses[$index] as $course) {
                     $pengajarans[] = [
                         'kode_mk' => $course['kode_mk'],
                         'nama_mk' => $course['nama_mk'],
-                        'bidang_keilmuan' => $course['bidang'],
-                        'kelas' => ['A', 'B', 'C', 'D'][array_rand(['A', 'B', 'C', 'D'])],
+                        'bidang_keilmuan' => 'Ilmu Komputer',
+                        'kelas' => 'A-' . rand(1, 3),
                         'sks' => $course['sks'],
-                        'jumlah_mahasiswa' => rand(25, 60),
+                        'jumlah_mahasiswa' => $course['jumlah_mahasiswa'],
                         'semester' => 'ganjil',
                         'tahun_akademik' => 2024,
                         'dosen_id' => $dosen->id,
@@ -74,6 +81,28 @@ class PengajaranSeeder extends Seeder
                         'updated_at' => now(),
                     ];
                 }
+            }
+        }
+
+        // Tambahkan data untuk periode sebelumnya
+        $oldPeriods = $periods->where('is_active', false)->take(2);
+
+        foreach ($oldPeriods as $period) {
+            foreach ($dosens->take(5) as $dosen) {
+                $pengajarans[] = [
+                    'kode_mk' => 'IFOLD' . rand(100, 999),
+                    'nama_mk' => 'Mata Kuliah Lama ' . rand(1, 5),
+                    'bidang_keilmuan' => 'Ilmu Komputer',
+                    'kelas' => 'B-' . rand(1, 2),
+                    'sks' => rand(2, 3),
+                    'jumlah_mahasiswa' => rand(20, 50),
+                    'semester' => $period->semester,
+                    'tahun_akademik' => $period->tahun_awal,
+                    'dosen_id' => $dosen->id,
+                    'academic_period_id' => $period->id,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
             }
         }
 

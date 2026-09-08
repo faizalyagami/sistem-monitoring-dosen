@@ -8,10 +8,6 @@ use App\Models\Pengajaran;
 use App\Models\Riset;
 use App\Models\Pkm;
 use App\Models\Bimbingan;
-use App\Models\Pelatihan;
-use App\Models\Sertifikasi;
-use App\Models\Asosiasi;
-use App\Models\Sipp;
 use App\Models\AcademicPeriod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -64,51 +60,16 @@ class EvaluasiKinerjaController extends Controller
             ->where('academic_period_id', $period->id)
             ->get();
 
-        // ========== PENGEMBANGAN PROFESI ==========
-        // 5a. Pelatihan
-        $pelatihans = Pelatihan::where('dosen_id', $dosen->id)
-            ->where('academic_period_id', $period->id)
-            ->get();
-
-        $sksPelatihan = 0;
-        foreach ($pelatihans as $pelatihan) {
-            // 1 SKS per 8 jam pelatihan (konversi)
-            $sks = $pelatihan->durasi ? $pelatihan->durasi / 8 : 1;
-            $sksPelatihan += $sks;
-        }
-
-        // 5b. Sertifikasi
-        $sertifikasis = Sertifikasi::where('dosen_id', $dosen->id)
-            ->where('academic_period_id', $period->id)
-            ->get();
-
-        $sksSertifikasi = $sertifikasis->count() * 1; // 1 SKS per sertifikasi
-
-        // 5c. Asosiasi Profesi
-        $asosiasis = Asosiasi::where('dosen_id', $dosen->id)
-            ->where('academic_period_id', $period->id)
-            ->get();
-
-        $sksAsosiasi = $asosiasis->count() * 0.5; // 0.5 SKS per asosiasi
-
-        // 5d. SIPP (Sertifikat Pendidik Profesional)
-        $sipps = Sipp::where('dosen_id', $dosen->id)->get();
-        $sksSipp = 0;
-        foreach ($sipps as $sipp) {
-            if ($sipp->status == 'aktif') {
-                $sksSipp = 2; // Maksimal 2 SKS untuk SIPP aktif
-                break;
-            }
-        }
-
-        // Total SKS Pengembangan Profesi
-        $sksPengembangan = $sksPelatihan + $sksSertifikasi + $sksAsosiasi + $sksSipp;
+        // Calculate SKS for each category
+        // Formula: 1 SKS = 16 jam per semester
+        // Setiap 50 menit = 0.05 SKS (approx)
 
         // 1. Pelaksanaan Pendidikan (Teaching)
         $sksPendidikan = 0;
         $detailPendidikan = [];
 
         foreach ($pengajarans as $pengajaran) {
+            // SKS from teaching
             $sks = $pengajaran->sks;
             $sksPendidikan += $sks;
 
@@ -121,11 +82,11 @@ class EvaluasiKinerjaController extends Controller
 
         // Add bimbingan to pendidikan
         foreach ($bimbingans as $bimbingan) {
-            $sksBimbingan = $bimbingan->jumlah_mahasiswa * 0.5;
+            $sksBimbingan = $bimbingan->jumlah_mahasiswa * 0.5; // 0.5 SKS per mahasiswa
             $sksPendidikan += $sksBimbingan;
 
             $detailPendidikan[] = [
-                'kegiatan' => 'Bimbingan ' . $bimbingan->jenis_bimbingan,
+                'kegiatan' => 'Bimbingan ' . $bimbingan->jenis_bimbingan . ' (' . $bimbingan->kategori_bimbingan . ')',
                 'sks' => $sksBimbingan,
                 'keterangan' => $bimbingan->jumlah_mahasiswa . ' mahasiswa'
             ];
@@ -136,6 +97,7 @@ class EvaluasiKinerjaController extends Controller
         $detailPenelitian = [];
 
         foreach ($risets as $riset) {
+            // SKS from research: 3-6 SKS per research depending on funding
             $sks = 3;
             if ($riset->jumlah_dana > 50000000) $sks = 6;
             elseif ($riset->jumlah_dana > 25000000) $sks = 4;
@@ -149,11 +111,12 @@ class EvaluasiKinerjaController extends Controller
             ];
         }
 
-        // 3. Pelaksanaan Pengabdian (PKM)
+        // 3. Pelaksanaan Pengabdian (Community Service/PKM)
         $sksPengabdian = 0;
         $detailPengabdian = [];
 
         foreach ($pkms as $pkm) {
+            // SKS from PKM: 2-4 SKS per activity
             $sks = 2;
             if ($pkm->jumlah_dana > 25000000) $sks = 4;
             elseif ($pkm->jumlah_dana > 10000000) $sks = 3;
@@ -168,28 +131,31 @@ class EvaluasiKinerjaController extends Controller
         }
 
         // 4. Pelaksanaan Penunjang (Supporting Activities)
-        $sksPenunjang = 0.75;
-        $detailPenunjang = [
-            [
-                'kegiatan' => 'Kegiatan Penunjang Lainnya',
-                'sks' => 0.75,
-                'keterangan' => 'Sesuai ketentuan'
-            ]
+        $sksPenunjang = 0;
+        $detailPenunjang = [];
+
+        // Add supporting activities if any
+        // Example: attending seminars, workshops, etc.
+        $sksPenunjang = 0.75; // Default minimal
+        $detailPenunjang[] = [
+            'kegiatan' => 'Kegiatan Penunjang Lainnya',
+            'sks' => 0.75,
+            'keterangan' => 'Sesuai ketentuan BKD'
         ];
 
         // Calculate totals and status
-        $targetMinimal = 3;
-        $targetMaksimal = 16;
+        $targetMinimal = 3; // Minimal 3 SKS
+        $targetMaksimal = 16; // Maksimal 16 SKS
 
-        $totalSks = $sksPendidikan + $sksPenelitian + $sksPengabdian + $sksPenunjang + $sksPengembangan;
-        $sksLebih = max($totalSks - $targetMinimal, 0);
+        $totalSks = $sksPendidikan + $sksPenelitian + $sksPengabdian + $sksPenunjang;
+        $sksLebih = $totalSks - $targetMinimal;
+        if ($sksLebih < 0) $sksLebih = 0;
 
         // Determine status for each category
         $statusPendidikan = $sksPendidikan >= $targetMinimal ? 'M' : 'TM';
-        $statusPenelitian = $sksPenelitian >= 0 ? 'M' : 'TM';
-        $statusPengabdian = $sksPengabdian >= 0 ? 'M' : 'TM';
-        $statusPenunjang = $sksPenunjang >= 0 ? 'M' : 'TM';
-        $statusPengembangan = $sksPengembangan > 0 ? 'M' : 'M';
+        $statusPenelitian = $sksPenelitian >= 0 ? 'M' : 'TM'; // Boleh kosong
+        $statusPengabdian = $sksPengabdian >= 0 ? 'M' : 'TM'; // Boleh kosong
+        $statusPenunjang = $sksPenunjang >= 0 ? 'M' : 'TM'; // Boleh kosong
         $statusKeseluruhan = $totalSks >= $targetMinimal ? 'M' : 'TM';
 
         // Prepare data for the table
@@ -207,7 +173,7 @@ class EvaluasiKinerjaController extends Controller
                 'jenis_kinerja' => 'Pelaksanaan Penelitian',
                 'syarat' => 'Boleh Kosong',
                 'sks_bkd' => number_format($sksPenelitian, 2),
-                'sks_lebih' => '0',
+                'sks_lebih' => number_format(max($sksPenelitian - $targetMinimal, 0), 2),
                 'status' => $statusPenelitian
             ],
             [
@@ -215,7 +181,7 @@ class EvaluasiKinerjaController extends Controller
                 'jenis_kinerja' => 'Pelaksanaan Pengabdian',
                 'syarat' => 'Boleh Kosong',
                 'sks_bkd' => number_format($sksPengabdian, 2),
-                'sks_lebih' => '0',
+                'sks_lebih' => number_format(max($sksPengabdian - $targetMinimal, 0), 2),
                 'status' => $statusPengabdian
             ],
             [
@@ -223,34 +189,26 @@ class EvaluasiKinerjaController extends Controller
                 'jenis_kinerja' => 'Pelaksanaan Penunjang',
                 'syarat' => 'Boleh Kosong',
                 'sks_bkd' => number_format($sksPenunjang, 2),
-                'sks_lebih' => '0',
+                'sks_lebih' => number_format(max($sksPenunjang - $targetMinimal, 0), 2),
                 'status' => $statusPenunjang
-            ],
-            [
-                'no' => 5,
-                'jenis_kinerja' => 'Pengembangan Profesi',
-                'syarat' => 'Boleh Kosong',
-                'sks_bkd' => number_format($sksPengembangan, 2),
-                'sks_lebih' => '0',
-                'status' => $statusPengembangan
             ],
         ];
 
         // Criteria rows
         $criteriaRows = [
             [
-                'jenis_kinerja' => 'Kriteria Pelaksanaan Pendidikan dan Penelitian',
+                'jenis_kinerja' => 'Kriteria Pelaksanaan Pendidikan dan Pelaksanaan Penelitian',
                 'syarat' => 'Minimal 3 sks',
                 'sks_bkd' => number_format($sksPendidikan + $sksPenelitian, 2),
                 'sks_lebih' => number_format(max(($sksPendidikan + $sksPenelitian) - $targetMinimal, 0), 2),
                 'status' => ($sksPendidikan + $sksPenelitian) >= $targetMinimal ? 'M' : 'TM'
             ],
             [
-                'jenis_kinerja' => 'Kriteria Pelaksanaan Pengabdian dan Penunjang',
+                'jenis_kinerja' => 'Kriteria Pelaksanaan Pengabdian dan Pelaksanaan Penunjang',
                 'syarat' => 'Boleh Kosong',
                 'sks_bkd' => number_format($sksPengabdian + $sksPenunjang, 2),
-                'sks_lebih' => '0',
-                'status' => 'M'
+                'sks_lebih' => number_format(max(($sksPengabdian + $sksPenunjang) - $targetMinimal, 0), 2),
+                'status' => ($sksPengabdian + $sksPenunjang) >= 0 ? 'M' : 'TM'
             ],
         ];
 
@@ -261,29 +219,6 @@ class EvaluasiKinerjaController extends Controller
             'sks_bkd' => number_format($totalSks, 2),
             'sks_lebih' => number_format($sksLebih, 2),
             'status' => $statusKeseluruhan
-        ];
-
-        // Detail Pengembangan Profesi
-        $detailPengembangan = [
-            'pelatihan' => [
-                'jumlah' => $pelatihans->count(),
-                'sks' => number_format($sksPelatihan, 2),
-                'items' => $pelatihans
-            ],
-            'sertifikasi' => [
-                'jumlah' => $sertifikasis->count(),
-                'sks' => number_format($sksSertifikasi, 2),
-                'items' => $sertifikasis
-            ],
-            'asosiasi' => [
-                'jumlah' => $asosiasis->count(),
-                'sks' => number_format($sksAsosiasi, 2),
-                'items' => $asosiasis
-            ],
-            'sipp' => [
-                'status' => $sksSipp > 0 ? 'Aktif' : 'Tidak Ada',
-                'sks' => number_format($sksSipp, 2)
-            ]
         ];
 
         return [
@@ -308,11 +243,6 @@ class EvaluasiKinerjaController extends Controller
                 'sks' => $sksPenunjang,
                 'detail' => $detailPenunjang,
                 'status' => $statusPenunjang
-            ],
-            'pengembangan' => [
-                'sks' => $sksPengembangan,
-                'detail' => $detailPengembangan,
-                'status' => $statusPengembangan
             ],
             'kinerja_table' => $kinerjaTable,
             'criteria_rows' => $criteriaRows,
@@ -344,6 +274,7 @@ class EvaluasiKinerjaController extends Controller
      */
     public function exportPdf(Request $request)
     {
+        // Will be implemented with DomPDF
         return redirect()->back()->with('info', 'Fitur export PDF sedang dalam pengembangan');
     }
 }
