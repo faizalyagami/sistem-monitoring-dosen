@@ -170,25 +170,6 @@
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
-                                <div class="col-md-6">
-                                    <label for="no_sk" class="form-label fw-bold">No. SK (Surat Keputusan)</label>
-                                    <input type="text" name="no_sk" id="no_sk"
-                                        class="form-control @error('no_sk') is-invalid @enderror"
-                                        value="{{ old('no_sk', $pengajaran->no_sk ?? '') }}">
-                                    @error('no_sk')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-
-                                <div class="col-md-6">
-                                    <label for="tanggal_sk" class="form-label fw-bold">Tanggal SK</label>
-                                    <input type="date" name="tanggal_sk" id="tanggal_sk"
-                                        class="form-control @error('tanggal_sk') is-invalid @enderror"
-                                        value="{{ old('tanggal_sk', isset($pengajaran) && $pengajaran->tanggal_sk ? $pengajaran->tanggal_sk->format('Y-m-d') : '') }}">
-                                    @error('tanggal_sk')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
                             </div>
 
                             <div class="mt-4">

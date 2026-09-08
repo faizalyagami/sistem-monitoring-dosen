@@ -79,10 +79,6 @@ class BimbinganController extends Controller
             'jumlah_mahasiswa' => 'required|integer|min:1',
             'semester' => 'required|in:ganjil,genap',
             'tahun_akademik' => 'required|integer|min:2000|max:2100',
-            'no_sk_pembimbing' => 'nullable|string|max:100',
-            'tanggal_sk_pembimbing' => 'nullable|date',
-            'no_sk_penguji' => 'nullable|string|max:100',
-            'tanggal_sk_penguji' => 'nullable|date',
         ]);
 
         Bimbingan::create($validated);
@@ -127,10 +123,6 @@ class BimbinganController extends Controller
             'jumlah_mahasiswa' => 'required|integer|min:1',
             'semester' => 'required|in:ganjil,genap',
             'tahun_akademik' => 'required|integer|min:2000|max:2100',
-            'no_sk_pembimbing' => 'nullable|string|max:100',
-            'tanggal_sk_pembimbing' => 'nullable|date',
-            'no_sk_penguji' => 'nullable|string|max:100',
-            'tanggal_sk_penguji' => 'nullable|date',
         ]);
 
         $bimbingan->update($validated);

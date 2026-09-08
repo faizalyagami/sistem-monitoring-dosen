@@ -82,7 +82,7 @@
         <div class="card shadow-sm mb-4">
             <div class="card-body">
                 <form method="GET" action="{{ route('admin.bimbingan.index') }}" class="row g-3">
-                    <div class="col-md-2">
+                    <div class="col-md-3">
                         <label class="form-label fw-bold">Dosen</label>
                         <select name="dosen_id" class="form-select">
                             <option value="">Semua Dosen</option>
@@ -138,9 +138,9 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-2 d-flex align-items-end">
+                    <div class="col-md-1 d-flex align-items-end">
                         <button type="submit" class="btn btn-primary w-100">
-                            <i class="bi bi-search"></i> Filter
+                            <i class="bi bi-search"></i>
                         </button>
                     </div>
                 </form>
@@ -157,14 +157,14 @@
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th width="40">No</th>
+                                <th width="50">No</th>
                                 <th>Dosen Pembimbing</th>
-                                <th>Jenis</th>
+                                <th>Jenis Bimbingan</th>
                                 <th>Kategori</th>
-                                <th>Jml Mhs</th>
-                                <th>No. SK Pembimbing</th>
-                                <th>No. SK Penguji</th>
-                                <th>Periode/Semester</th>
+                                <th>Jumlah Mahasiswa</th>
+                                <th>Periode</th>
+                                <th>Semester</th>
+                                <th>Tahun</th>
                                 <th width="100">Aksi</th>
                             </tr>
                         </thead>
@@ -198,49 +198,19 @@
                                         <span class="badge bg-secondary">{{ $bimbingan->kategori_bimbingan ?? '-' }}</span>
                                     </td>
                                     <td>
-                                        <span class="fw-bold">{{ $bimbingan->jumlah_mahasiswa }}</span>
+                                        <span class="fw-bold">{{ $bimbingan->jumlah_mahasiswa }}</span> Mahasiswa
                                     </td>
-
-                                    {{-- SK Pembimbing --}}
-                                    <td>
-                                        @if ($bimbingan->no_sk_pembimbing)
-                                            <span class="badge bg-info" title="{{ $bimbingan->no_sk_pembimbing }}">
-                                                <i class="bi bi-file-text"></i>
-                                                {{ Str::limit($bimbingan->no_sk_pembimbing, 15) }}
-                                            </span>
-                                            <br>
-                                            <small class="text-muted">
-                                                {{ $bimbingan->tanggal_sk_pembimbing ? date('d/m/Y', strtotime($bimbingan->tanggal_sk_pembimbing)) : '-' }}
-                                            </small>
-                                        @else
-                                            <span class="text-muted">-</span>
-                                        @endif
-                                    </td>
-
-                                    {{-- SK Penguji --}}
-                                    <td>
-                                        @if ($bimbingan->no_sk_penguji)
-                                            <span class="badge bg-warning" title="{{ $bimbingan->no_sk_penguji }}">
-                                                <i class="bi bi-file-text"></i>
-                                                {{ Str::limit($bimbingan->no_sk_penguji, 15) }}
-                                            </span>
-                                            <br>
-                                            <small class="text-muted">
-                                                {{ $bimbingan->tanggal_sk_penguji ? date('d/m/Y', strtotime($bimbingan->tanggal_sk_penguji)) : '-' }}
-                                            </small>
-                                        @else
-                                            <span class="text-muted">-</span>
-                                        @endif
-                                    </td>
-
                                     <td>
                                         <small>{{ $bimbingan->academicPeriod->nama_periode ?? '-' }}</small>
-                                        <br>
+                                    </td>
+                                    <td>
                                         <span
                                             class="badge bg-{{ $bimbingan->semester == 'ganjil' ? 'info' : 'warning' }}">
                                             {{ ucfirst($bimbingan->semester) }}
                                         </span>
-                                        / {{ $bimbingan->tahun_akademik }}
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-dark">{{ $bimbingan->tahun_akademik }}</span>
                                     </td>
                                     <td>
                                         <div class="btn-group btn-group-sm">
@@ -340,17 +310,6 @@
             background: linear-gradient(135deg, #6c5ce7, #a29bfe);
             border-color: transparent;
             color: white;
-        }
-
-        /* Table compact */
-        .table td,
-        .table th {
-            padding: 10px 8px;
-            vertical-align: middle;
-        }
-
-        .badge {
-            font-weight: 500;
         }
     </style>
 

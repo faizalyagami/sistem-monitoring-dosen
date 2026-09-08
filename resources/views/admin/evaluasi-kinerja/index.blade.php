@@ -101,62 +101,62 @@
 
                     <!-- Summary Cards -->
                     <div class="row g-3 mb-4">
-                        <div class="col-md-2">
+                        <div class="col-md-3">
                             <div class="card bg-light">
                                 <div class="card-body text-center">
                                     <i class="bi bi-book fs-2 text-primary"></i>
-                                    <h6 class="mt-2 mb-0">Pendidikan</h6>
+                                    <h6 class="mt-2 mb-0">Pelaksanaan Pendidikan</h6>
                                     <h4 class="mb-0">{{ number_format($evaluasiData['pendidikan']['sks'], 2) }}
                                         <small>sks</small>
                                     </h4>
                                     <span
                                         class="badge bg-{{ $evaluasiData['pendidikan']['status'] == 'M' ? 'success' : 'danger' }}">
-                                        {{ $evaluasiData['pendidikan']['status'] == 'M' ? 'M' : 'TM' }}
+                                        {{ $evaluasiData['pendidikan']['status'] == 'M' ? 'Memenuhi' : 'Tidak Memenuhi' }}
                                     </span>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-3">
                             <div class="card bg-light">
                                 <div class="card-body text-center">
                                     <i class="bi bi-mortarboard fs-2 text-success"></i>
-                                    <h6 class="mt-2 mb-0">Penelitian</h6>
+                                    <h6 class="mt-2 mb-0">Pelaksanaan Penelitian</h6>
                                     <h4 class="mb-0">{{ number_format($evaluasiData['penelitian']['sks'], 2) }}
                                         <small>sks</small>
                                     </h4>
                                     <span
                                         class="badge bg-{{ $evaluasiData['penelitian']['status'] == 'M' ? 'success' : 'danger' }}">
-                                        {{ $evaluasiData['penelitian']['status'] == 'M' ? 'M' : 'TM' }}
+                                        {{ $evaluasiData['penelitian']['status'] == 'M' ? 'Memenuhi' : 'Tidak Memenuhi' }}
                                     </span>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-3">
                             <div class="card bg-light">
                                 <div class="card-body text-center">
                                     <i class="bi bi-people-fill fs-2 text-info"></i>
-                                    <h6 class="mt-2 mb-0">Pengabdian</h6>
+                                    <h6 class="mt-2 mb-0">Pelaksanaan Pengabdian</h6>
                                     <h4 class="mb-0">{{ number_format($evaluasiData['pengabdian']['sks'], 2) }}
                                         <small>sks</small>
                                     </h4>
                                     <span
                                         class="badge bg-{{ $evaluasiData['pengabdian']['status'] == 'M' ? 'success' : 'danger' }}">
-                                        {{ $evaluasiData['pengabdian']['status'] == 'M' ? 'M' : 'TM' }}
+                                        {{ $evaluasiData['pengabdian']['status'] == 'M' ? 'Memenuhi' : 'Tidak Memenuhi' }}
                                     </span>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-3">
                             <div class="card bg-light">
                                 <div class="card-body text-center">
                                     <i class="bi bi-star fs-2 text-warning"></i>
-                                    <h6 class="mt-2 mb-0">Penunjang</h6>
+                                    <h6 class="mt-2 mb-0">Pelaksanaan Penunjang</h6>
                                     <h4 class="mb-0">{{ number_format($evaluasiData['penunjang']['sks'], 2) }}
                                         <small>sks</small>
                                     </h4>
                                     <span
                                         class="badge bg-{{ $evaluasiData['penunjang']['status'] == 'M' ? 'success' : 'danger' }}">
-                                        {{ $evaluasiData['penunjang']['status'] == 'M' ? 'M' : 'TM' }}
+                                        {{ $evaluasiData['penunjang']['status'] == 'M' ? 'Memenuhi' : 'Tidak Memenuhi' }}
                                     </span>
                                 </div>
                             </div>
@@ -204,7 +204,7 @@
                                 <!-- Criteria Rows -->
                                 @foreach ($evaluasiData['criteria_rows'] as $item)
                                     <tr>
-                                        <td>—</span></td>
+                                        <td></td>
                                         <td><strong>{{ $item['jenis_kinerja'] }}</strong></td>
                                         <td>{{ $item['syarat'] }}</td>
                                         <td>{{ $item['sks_bkd'] }}</td>
@@ -222,16 +222,14 @@
                                 <tr>
                                     <td colspan="2">
                                         <strong>{{ $evaluasiData['summary_row']['jenis_kinerja'] }}</strong>
-                                        </span>
                                     </td>
-                                    <td>{{ $evaluasiData['summary_row']['syarat'] }}</span></td>
-                                    <td><strong>{{ $evaluasiData['summary_row']['sks_bkd'] }}</strong></span></td>
-                                    <td><strong>{{ $evaluasiData['summary_row']['sks_lebih'] }}</strong></span></td>
+                                    <td>{{ $evaluasiData['summary_row']['syarat'] }}</td>
+                                    <td><strong>{{ $evaluasiData['summary_row']['sks_bkd'] }}</strong></td>
+                                    <td><strong>{{ $evaluasiData['summary_row']['sks_lebih'] }}</strong></td>
                                     <td class="text-center">
                                         <span
                                             class="badge bg-{{ $evaluasiData['summary_row']['status'] == 'M' ? 'success' : 'danger' }} fs-6 px-3 py-2">
                                             {{ $evaluasiData['summary_row']['status'] }}
-                                        </span>
                                         </span>
                                     </td>
                                 </tr>
@@ -356,167 +354,6 @@
                         </div>
                     </div>
 
-                    <!-- ========== DETAIL PENGEMBANGAN PROFESI ========== -->
-                    <div class="row mt-2">
-                        <div class="col-md-12">
-                            <div class="card border-secondary mb-3">
-                                <div class="card-header bg-secondary text-white">
-                                    <i class="bi bi-award"></i> Detail Pengembangan Profesi
-                                </div>
-                                <div class="card-body">
-                                    <div class="row">
-                                        <!-- Pelatihan -->
-                                        <div class="col-md-3 mb-3">
-                                            <div class="card h-100">
-                                                <div class="card-header bg-primary text-white text-center py-2">
-                                                    <i class="bi bi-mortarboard"></i> Pelatihan
-                                                </div>
-                                                <div class="card-body p-2">
-                                                    @if (isset($evaluasiData['pengembangan']['detail']['pelatihan']) &&
-                                                            $evaluasiData['pengembangan']['detail']['pelatihan']['jumlah'] > 0)
-                                                        <div class="text-center mb-2">
-                                                            <h5 class="mb-0">
-                                                                {{ $evaluasiData['pengembangan']['detail']['pelatihan']['jumlah'] }}
-                                                            </h5>
-                                                            <small class="text-muted">Kegiatan</small>
-                                                            <h6>{{ $evaluasiData['pengembangan']['detail']['pelatihan']['sks'] }}
-                                                                sks</h6>
-                                                        </div>
-                                                        <ul class="list-group list-group-flush small">
-                                                            @foreach ($evaluasiData['pengembangan']['detail']['pelatihan']['items']->take(3) as $item)
-                                                                <li class="list-group-item p-1">
-                                                                    <small>{{ Str::limit($item->nama_pelatihan, 30) }}</small>
-                                                                    <span
-                                                                        class="badge bg-primary float-end">{{ $item->durasi ? $item->durasi / 8 : 1 }}
-                                                                        sks</span>
-                                                                </li>
-                                                            @endforeach
-                                                            @if ($evaluasiData['pengembangan']['detail']['pelatihan']['jumlah'] > 3)
-                                                                <li class="list-group-item text-center">
-                                                                    <small>+{{ $evaluasiData['pengembangan']['detail']['pelatihan']['jumlah'] - 3 }}
-                                                                        lainnya</small>
-                                                                </li>
-                                                            @endif
-                                                        </ul>
-                                                    @else
-                                                        <p class="text-muted text-center mb-0">Tidak ada data</p>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- Sertifikasi -->
-                                        <div class="col-md-3 mb-3">
-                                            <div class="card h-100">
-                                                <div class="card-header bg-success text-white text-center py-2">
-                                                    <i class="bi bi-patch-check"></i> Sertifikasi
-                                                </div>
-                                                <div class="card-body p-2">
-                                                    @if (isset($evaluasiData['pengembangan']['detail']['sertifikasi']) &&
-                                                            $evaluasiData['pengembangan']['detail']['sertifikasi']['jumlah'] > 0)
-                                                        <div class="text-center mb-2">
-                                                            <h5 class="mb-0">
-                                                                {{ $evaluasiData['pengembangan']['detail']['sertifikasi']['jumlah'] }}
-                                                            </h5>
-                                                            <small class="text-muted">Sertifikat</small>
-                                                            <h6>{{ $evaluasiData['pengembangan']['detail']['sertifikasi']['sks'] }}
-                                                                sks</h6>
-                                                        </div>
-                                                        <ul class="list-group list-group-flush small">
-                                                            @foreach ($evaluasiData['pengembangan']['detail']['sertifikasi']['items']->take(3) as $item)
-                                                                <li class="list-group-item p-1">
-                                                                    <small>{{ Str::limit($item->jenis_sertifikasi, 30) }}</small>
-                                                                    <span class="badge bg-success float-end">1</span>
-                                                                </li>
-                                                            @endforeach
-                                                            @if ($evaluasiData['pengembangan']['detail']['sertifikasi']['jumlah'] > 3)
-                                                                <li class="list-group-item text-center">
-                                                                    <small>+{{ $evaluasiData['pengembangan']['detail']['sertifikasi']['jumlah'] - 3 }}
-                                                                        lainnya</small>
-                                                                </li>
-                                                            @endif
-                                                        </ul>
-                                                    @else
-                                                        <p class="text-muted text-center mb-0">Tidak ada data</p>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- Asosiasi Profesi -->
-                                        <div class="col-md-3 mb-3">
-                                            <div class="card h-100">
-                                                <div class="card-header bg-info text-white text-center py-2">
-                                                    <i class="bi bi-people"></i> Asosiasi Profesi
-                                                </div>
-                                                <div class="card-body p-2">
-                                                    @if (isset($evaluasiData['pengembangan']['detail']['asosiasi']) &&
-                                                            $evaluasiData['pengembangan']['detail']['asosiasi']['jumlah'] > 0)
-                                                        <div class="text-center mb-2">
-                                                            <h5 class="mb-0">
-                                                                {{ $evaluasiData['pengembangan']['detail']['asosiasi']['jumlah'] }}
-                                                            </h5>
-                                                            <small class="text-muted">Keanggotaan</small>
-                                                            <h6>{{ $evaluasiData['pengembangan']['detail']['asosiasi']['sks'] }}
-                                                                sks</h6>
-                                                        </div>
-                                                        <ul class="list-group list-group-flush small">
-                                                            @foreach ($evaluasiData['pengembangan']['detail']['asosiasi']['items']->take(3) as $item)
-                                                                <li class="list-group-item p-1">
-                                                                    <small>{{ Str::limit($item->nama_asosiasi, 30) }}</small>
-                                                                    <span class="badge bg-info float-end">0.5</span>
-                                                                </li>
-                                                            @endforeach
-                                                            @if ($evaluasiData['pengembangan']['detail']['asosiasi']['jumlah'] > 3)
-                                                                <li class="list-group-item text-center">
-                                                                    <small>+{{ $evaluasiData['pengembangan']['detail']['asosiasi']['jumlah'] - 3 }}
-                                                                        lainnya</small>
-                                                                </li>
-                                                            @endif
-                                                        </ul>
-                                                    @else
-                                                        <p class="text-muted text-center mb-0">Tidak ada data</p>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- SIPP -->
-                                        <div class="col-md-3 mb-3">
-                                            <div class="card h-100">
-                                                <div class="card-header bg-warning text-dark text-center py-2">
-                                                    <i class="bi bi-award"></i> SIPP
-                                                </div>
-                                                <div class="card-body p-2">
-                                                    @if (isset($evaluasiData['pengembangan']['detail']['sipp']) &&
-                                                            $evaluasiData['pengembangan']['detail']['sipp']['status'] != 'Tidak Ada')
-                                                        <div class="text-center">
-                                                            <h5 class="mb-0">
-                                                                {{ $evaluasiData['pengembangan']['detail']['sipp']['status'] }}
-                                                            </h5>
-                                                            <small class="text-muted">Status SIPP</small>
-                                                            <h6>{{ $evaluasiData['pengembangan']['detail']['sipp']['sks'] }}
-                                                                sks</h6>
-                                                            <span class="badge bg-success mt-2">Aktif</span>
-                                                        </div>
-                                                    @else
-                                                        <p class="text-muted text-center mb-0">Tidak ada SIPP aktif</p>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Total Pengembangan Profesi -->
-                                    <div class="text-end mt-3 pt-2 border-top">
-                                        <strong>Total SKS Pengembangan Profesi:
-                                            {{ number_format($evaluasiData['pengembangan']['sks'], 2) }} sks</strong>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- Conclusion -->
                     <div
                         class="alert {{ $evaluasiData['status_keseluruhan'] == 'M' ? 'alert-success' : 'alert-danger' }} text-center mt-3">
@@ -551,14 +388,6 @@
 
         .card-header {
             font-weight: 600;
-        }
-
-        .card {
-            transition: transform 0.2s;
-        }
-
-        .card:hover {
-            transform: translateY(-3px);
         }
     </style>
 @endsection

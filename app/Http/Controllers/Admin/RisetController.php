@@ -85,8 +85,6 @@ class RisetController extends Controller
             'publikasi_link' => 'nullable|url',
             'kolaborator' => 'nullable|max:255',
             'file_laporan' => 'nullable|file|mimes:pdf,doc,docx|max:5120',
-            'no_sk' => 'nullable|string|max:100',
-            'tanggal_sk' => 'nullable|date',
         ]);
 
         if ($request->hasFile('file_laporan')) {
@@ -140,8 +138,6 @@ class RisetController extends Controller
             'publikasi_link' => 'nullable|url',
             'kolaborator' => 'nullable|max:255',
             'file_laporan' => 'nullable|file|mimes:pdf,doc,docx|max:5120',
-            'no_sk' => 'nullable|string|max:100',
-            'tanggal_sk' => 'nullable|date',
         ]);
 
         if ($request->hasFile('file_laporan')) {

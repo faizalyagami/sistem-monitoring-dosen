@@ -95,15 +95,7 @@ class DosenController extends Controller
      */
     public function show($id)
     {
-        $dosen = Dosen::with([
-            'pengajarans.academicPeriod',
-            'risets',
-            'pkms',
-            'bimbingans',
-            'pelatihans',
-            'asosiasis',
-            'sertifikasis'
-        ])->findOrFail($id);
+        $dosen = Dosen::with(['pengajarans', 'risets', 'pkms', 'bimbingans'])->findOrFail($id);
 
         $stats = [
             'total_pengajaran' => $dosen->pengajarans->count(),
@@ -111,9 +103,6 @@ class DosenController extends Controller
             'total_riset' => $dosen->risets->count(),
             'total_pkm' => $dosen->pkms->count(),
             'total_bimbingan' => $dosen->bimbingans->count(),
-            'total_pelatihan' => $dosen->pelatihans->count(),
-            'total_asosiasi' => $dosen->asosiasis->count(),
-            'total_sertifikasi' => $dosen->sertifikasis->count(),
         ];
 
         return view('admin.dosens.show', compact('dosen', 'stats'));

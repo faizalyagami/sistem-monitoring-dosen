@@ -17,10 +17,6 @@ class Bimbingan extends Model
         'jumlah_mahasiswa',
         'semester',
         'tahun_akademik',
-        'no_sk_pembimbing',
-        'tanggal_sk_pembimbing',
-        'no_sk_penguji',
-        'tanggal_sk_penguji',
     ];
 
     public function dosen()

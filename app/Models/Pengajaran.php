@@ -20,8 +20,6 @@ class Pengajaran extends Model
         'jumlah_mahasiswa',
         'semester',
         'tahun_akademik',
-        'no_sk',
-        'tanggal_sk',
         'dosen_id',
         'academic_period_id',
     ];
@@ -47,11 +45,6 @@ class Pengajaran extends Model
      */
     public function getTotalJamAttribute()
     {
-        return $this->sks * 16;
-    }
-
-    public function getTanggalSkFormattedAttribute()
-    {
-        return $this->tanggal_sk ? $this->tanggal_sk->format('d/m/Y') : '-';
+        return $this->sks * 16; // 1 sks = 16 jam per semester
     }
 }

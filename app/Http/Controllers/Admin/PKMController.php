@@ -85,8 +85,6 @@ class PkmController extends Controller
             'tahun' => 'required|integer|min:2000|max:2100',
             'publikasi_link' => 'nullable|url',
             'file_laporan' => 'nullable|file|mimes:pdf,doc,docx|max:5120',
-            'no_sk' => 'nullable|string|max:100',
-            'tanggal_sk' => 'nullable|date',
         ]);
 
         if ($request->hasFile('file_laporan')) {
@@ -140,8 +138,6 @@ class PkmController extends Controller
             'tahun' => 'required|integer|min:2000|max:2100',
             'publikasi_link' => 'nullable|url',
             'file_laporan' => 'nullable|file|mimes:pdf,doc,docx|max:5120',
-            'no_sk' => 'nullable|string|max:100',
-            'tanggal_sk' => 'nullable|date',
         ]);
 
         if ($request->hasFile('file_laporan')) {

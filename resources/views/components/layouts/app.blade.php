@@ -106,15 +106,6 @@
             font-size: 28px;
         }
 
-        .logo-icon img {
-            width: 70px;
-            height: 70px;
-            object-fit: contain;
-            border-radius: 50%;
-            background: #fff;
-            padding: 5px;
-        }
-
         #sidebar .sidebar-header h3 {
             font-size: 1.3rem;
             font-weight: 700;
