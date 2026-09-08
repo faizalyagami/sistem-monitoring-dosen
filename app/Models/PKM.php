@@ -24,6 +24,8 @@ class PKM extends Model
         'tahun',
         'publikasi_link',
         'file_laporan',
+        'no_sk',
+        'tanggal_sk',
     ];
 
     protected $casts = [

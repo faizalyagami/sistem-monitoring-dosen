@@ -12,12 +12,12 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Buat Admin (bukan superadmin)
+
         User::create([
             'name' => 'Administrator',
             'email' => 'admin@unisba.ac.id',
             'password' => Hash::make('password123'),
-            'role' => 'admin',  // Ganti dari 'superadmin' ke 'admin'
+            'role' => 'admin',
             'status' => 'active',
             'dosen_id' => null,
         ]);

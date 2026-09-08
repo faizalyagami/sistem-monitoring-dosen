@@ -80,6 +80,8 @@ class PengajaranController extends Controller
             'tahun_akademik' => 'required|integer|min:2000|max:2100',
             'dosen_id' => 'required|exists:dosens,id',
             'academic_period_id' => 'required|exists:academic_periods,id',
+            'no_sk' => 'nullable|string|max:100',
+            'tanggal_sk' => 'nullable|date',
         ]);
 
         Pengajaran::create($validated);
@@ -127,6 +129,8 @@ class PengajaranController extends Controller
             'tahun_akademik' => 'required|integer|min:2000|max:2100',
             'dosen_id' => 'required|exists:dosens,id',
             'academic_period_id' => 'required|exists:academic_periods,id',
+            'no_sk' => 'nullable|string|max:100',
+            'tanggal_sk' => 'nullable|date',
         ]);
 
         $pengajaran->update($validated);

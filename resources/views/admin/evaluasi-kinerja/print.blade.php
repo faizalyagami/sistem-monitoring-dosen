@@ -133,6 +133,68 @@
                     </span>
                 </div>
             </div>
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card border-secondary mb-3">
+                        <div class="card-header bg-secondary text-white">
+                            <i class="bi bi-award"></i> Detail Pengembangan Profesi
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <!-- Pelatihan -->
+                                <div class="col-md-3">
+                                    <strong>Pelatihan</strong><br>
+                                    @if (isset($evaluasiData['pengembangan']['detail']['pelatihan']) &&
+                                            $evaluasiData['pengembangan']['detail']['pelatihan']['jumlah'] > 0)
+                                        {{ $evaluasiData['pengembangan']['detail']['pelatihan']['jumlah'] }} Kegiatan
+                                        ({{ $evaluasiData['pengembangan']['detail']['pelatihan']['sks'] }} sks)
+                                    @else
+                                        Tidak ada data
+                                    @endif
+                                </div>
+                                <!-- Sertifikasi -->
+                                <div class="col-md-3">
+                                    <strong>Sertifikasi</strong><br>
+                                    @if (isset($evaluasiData['pengembangan']['detail']['sertifikasi']) &&
+                                            $evaluasiData['pengembangan']['detail']['sertifikasi']['jumlah'] > 0)
+                                        {{ $evaluasiData['pengembangan']['detail']['sertifikasi']['jumlah'] }}
+                                        Sertifikat
+                                        ({{ $evaluasiData['pengembangan']['detail']['sertifikasi']['sks'] }} sks)
+                                    @else
+                                        Tidak ada data
+                                    @endif
+                                </div>
+                                <!-- Asosiasi -->
+                                <div class="col-md-3">
+                                    <strong>Asosiasi Profesi</strong><br>
+                                    @if (isset($evaluasiData['pengembangan']['detail']['asosiasi']) &&
+                                            $evaluasiData['pengembangan']['detail']['asosiasi']['jumlah'] > 0)
+                                        {{ $evaluasiData['pengembangan']['detail']['asosiasi']['jumlah'] }} Keanggotaan
+                                        ({{ $evaluasiData['pengembangan']['detail']['asosiasi']['sks'] }} sks)
+                                    @else
+                                        Tidak ada data
+                                    @endif
+                                </div>
+                                <!-- SIPP -->
+                                <div class="col-md-3">
+                                    <strong>SIPP</strong><br>
+                                    @if (isset($evaluasiData['pengembangan']['detail']['sipp']) &&
+                                            $evaluasiData['pengembangan']['detail']['sipp']['status'] != 'Tidak Ada')
+                                        Status: {{ $evaluasiData['pengembangan']['detail']['sipp']['status'] }}
+                                        ({{ $evaluasiData['pengembangan']['detail']['sipp']['sks'] }} sks)
+                                    @else
+                                        Tidak ada SIPP aktif
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="text-end mt-3 pt-2 border-top">
+                                <strong>Total SKS Pengembangan Profesi:
+                                    {{ number_format($evaluasiData['pengembangan']['sks'], 2) }} sks</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Main Table -->
@@ -191,21 +253,16 @@
 
         <!-- Signatures -->
         <div class="signature">
-            <div class="row">
+            <div class="row justify-content-end">
                 <div class="col-md-4 text-center">
-                    <p>Mengetahui,<br>Kepala BKD</p>
+                    <p>Mengetahui,<br>Dekan Fakultas Psikologi</p>
                     <br><br>
-                    <p>(_____________________)</p>
-                </div>
-                <div class="col-md-4 text-center">
-                    <p>Diperiksa,<br>Ketua Prodi</p>
-                    <br><br>
-                    <p>(_____________________)</p>
+                    <p>(Dr. Dewi Rosiana, M.Psi., Psikolog.)</p>
                 </div>
                 <div class="col-md-4 text-center">
                     <p>{{ $dosen->nama }}<br>Dosen Bersangkutan</p>
                     <br><br>
-                    <p>(_____________________)</p>
+                    <p>({{ $dosen->nama }})</p>
                 </div>
             </div>
         </div>

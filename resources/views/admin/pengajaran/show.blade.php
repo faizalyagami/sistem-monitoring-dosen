@@ -90,6 +90,16 @@
                                         <th>Total Jam Mengajar</th>
                                         <td>: <i class="bi bi-clock"></i> {{ $pengajaran->sks * 16 }} Jam/Semester</td>
                                     </tr>
+                                    @if ($pengajaran->no_sk)
+                                        <tr>
+                                            <th>No. SK</th>
+                                            <td>: {{ $pengajaran->no_sk }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Tanggal SK</th>
+                                            <td>: {{ $pengajaran->tanggal_sk_formatted }}</td>
+                                        </tr>
+                                    @endif
                                     <tr>
                                         <th>Tanggal Input</th>
                                         <td>: {{ $pengajaran->created_at->format('d F Y H:i:s') }}</td>

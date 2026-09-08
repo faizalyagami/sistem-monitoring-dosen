@@ -1,4 +1,8 @@
-<x-layouts.app title="Tambah Dosen">
+@extends('components.layouts.app')
+
+@section('title', 'Tambah Dosen')
+
+@section('content')
     <div class="container-fluid">
         <div class="d-flex align-items-center mb-4">
             <a href="{{ route('admin.dosens.index') }}" class="btn btn-outline-secondary me-3">
@@ -27,4 +31,4 @@
             </div>
         </div>
     </div>
-</x-layouts.app>
+@endsection

@@ -24,6 +24,8 @@ class Riset extends Model
         'kolaborator',
         'file_laporan',
         'tahun',
+        'no_sk',
+        'tanggal_sk',
     ];
 
     protected $casts = [

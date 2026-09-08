@@ -147,15 +147,23 @@
         }
 
         .login-header .logo {
-            width: 80px;
-            height: 80px;
-            background: rgba(255, 255, 255, 0.2);
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 20px;
+            background: rgba(255, 255, 255, 0.15);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 20px;
-            font-size: 40px;
+            padding: 8px;
+        }
+
+        .login-header .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 50%;
+            background: white;
         }
 
         .login-header h3 {
@@ -373,7 +381,7 @@
         <div class="login-card">
             <div class="login-header">
                 <div class="logo">
-                    <i class="bi bi-graph-up"></i>
+                    <img src="{{ asset('img/logo-fakultas-psikologi.jpg') }}" alt="Logo Fakultas Psikologi">
                 </div>
                 <h3>Sistem Monitoring Kinerja Dosen</h3>
                 <p>SIMONKER - Version 1.0</p>
@@ -440,10 +448,10 @@
                     <div class="demo-badge" onclick="fillDemo('admin@unisba.ac.id', 'password123')">
                         <i class="bi bi-shield-lock"></i> <strong>Admin</strong>
                     </div>
-                    <div class="demo-badge" onclick="fillDemo('dosen1@university.ac.id', 'password123')">
+                    <div class="demo-badge" onclick="fillDemo('siti.nurhayati@unisba.ac.id', 'password123')">
                         <i class="bi bi-person-badge"></i> <strong>Dosen 1</strong>
                     </div>
-                    <div class="demo-badge" onclick="fillDemo('dosen2@university.ac.id', 'password123')">
+                    <div class="demo-badge" onclick="fillDemo('ahmad.rizal@unisba.ac.id', 'password123')">
                         <i class="bi bi-person-badge"></i> <strong>Dosen 2</strong>
                     </div>
                 </div>

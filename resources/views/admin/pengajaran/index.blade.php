@@ -90,6 +90,8 @@
                                 <th>SKS</th>
                                 <th>Jumlah Mahasiswa</th>
                                 <th>Periode</th>
+                                <th>No. SK</th>
+                                <th>Tanggal SK</th>
                                 <th width="100">Aksi</th>
                             </tr>
                         </thead>
@@ -124,6 +126,8 @@
                                             {{ ucfirst($pengajaran->semester) }}
                                         </span>
                                     </td>
+                                    <td>{{ $pengajaran->no_sk ?? '-' }}</td>
+                                    <td>{{ $pengajaran->tanggal_sk ? $pengajaran->tanggal_sk->format('d/m/Y') : '-' }}</td>
                                     <td>
                                         <div class="btn-group btn-group-sm">
                                             <a href="{{ route('admin.pengajaran.show', $pengajaran->id) }}"
