@@ -435,7 +435,7 @@
                     </button>
                 </form>
 
-                <div class="demo-accounts">
+                {{-- <div class="demo-accounts">
                     <h6><i class="bi bi-info-circle me-1"></i> Demo Accounts</h6>
                     <div class="demo-badge" onclick="fillDemo('admin@unisba.ac.id', 'password123')">
                         <i class="bi bi-shield-lock"></i> <strong>Admin</strong>
@@ -446,7 +446,7 @@
                     <div class="demo-badge" onclick="fillDemo('dosen2@university.ac.id', 'password123')">
                         <i class="bi bi-person-badge"></i> <strong>Dosen 2</strong>
                     </div>
-                </div>
+                </div> --}}
             </div>
         </div>
 
