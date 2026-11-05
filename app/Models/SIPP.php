@@ -9,7 +9,7 @@ class Sipp extends Model
 {
     use HasFactory;
 
-    protected $table = 'sipps';
+    protected $table = 'table_sipps';
 
     protected $fillable = [
         'dosen_id',
@@ -17,6 +17,7 @@ class Sipp extends Model
         'bidang_keilmuan',
         'tahun_terbit',
         'status',
+        'file_sipp',
     ];
 
     protected $casts = [

@@ -1,4 +1,3 @@
-{{-- resources/views/admin/dosens/create.blade.php --}}
 @extends('components.layouts.app')
 
 @section('title', 'Tambah Dosen Baru')

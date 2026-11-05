@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('bidang_keilmuan');
             $table->year('tahun_terbit');
             $table->enum('status', ['aktif', 'tidak_aktif'])->default('aktif');
+            $table->string('file_sipp')->nullable();
             $table->timestamps();
 
             $table->index('dosen_id');

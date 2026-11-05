@@ -18,7 +18,7 @@
 
         <div class="card shadow-sm border-0">
             <div class="card-body p-4">
-                <form action="{{ route('admin.dosens.update', $dosen->id) }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('admin.dosens.update', $dosen->id) }}" method="PUT" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
 
