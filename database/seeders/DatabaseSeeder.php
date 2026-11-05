@@ -13,7 +13,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             AcademicPeriodSeeder::class,
-            DosenSeeder::class,
+            // DosenSeeder::class,
             UserSeeder::class,
             PengajaranSeeder::class,
             RisetSeeder::class,
@@ -27,6 +27,6 @@ class DatabaseSeeder extends Seeder
         $this->command->info('Admin: admin@unisba.ac.id / password123');
         $this->command->info('Operator: operator@unisba.ac.id / password123');
         $this->command->info('Viewer: viewer@unisba.ac.id / password123');
-        $this->command->info('Dosen: email sesuai data dosen / password123');
+        // $this->command->info('Dosen: email sesuai data dosen / password123');
     }
 }

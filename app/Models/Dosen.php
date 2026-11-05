@@ -22,6 +22,7 @@ class Dosen extends Model
         'jabatan_fungsional',
         'inpassing',
         'kepangkatan',
+        'bidang_keahlian'
     ];
 
     /**
@@ -63,6 +64,16 @@ class Dosen extends Model
     public function pelatihans()
     {
         return $this->hasMany(Pelatihan::class, 'dosen_id', 'id');
+    }
+
+    public function asosiasis()
+    {
+        return $this->hasMany(Asosiasi::class, 'dosen_id');
+    }
+
+    public function sertifikasis()
+    {
+        return $this->hasMany(Sertifikasi::class, 'dosen_id');
     }
 
     /**

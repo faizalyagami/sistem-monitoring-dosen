@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('jabatan_fungsional');
             $table->string('inpassing');
             $table->string('kepangkatan');
+            $table->string('bidang_keahlian');
             $table->timestamps();
         });
     }

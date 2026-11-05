@@ -46,8 +46,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Dosen
-    Route::resource('dosens', DosenController::class);
     Route::get('/dosens/export/excel', [DosenController::class, 'export'])->name('dosens.export');
+    Route::get('/dosens/download-template', [DosenController::class, 'downloadTemplate'])->name('dosens.download-template');
+    Route::post('/dosens/import', [DosenController::class, 'import'])->name('dosens.import');
+    Route::post('/dosens/{id}/reset-password', [DosenController::class, 'resetPassword'])->name('dosens.reset-password');
+
+    Route::resource('dosens', DosenController::class);
 
     // Pengajaran
     Route::resource('pengajaran', PengajaranController::class);

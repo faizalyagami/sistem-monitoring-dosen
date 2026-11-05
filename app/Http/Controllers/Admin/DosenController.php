@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Imports\DosenImport;
 use App\Models\Dosen;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
 
 class DosenController extends Controller
 {
@@ -80,7 +82,7 @@ class DosenController extends Controller
         User::create([
             'name' => $dosen->nama,
             'email' => $dosen->email,
-            'password' => Hash::make('password123'),
+            'password' => Hash::make($dosen->nik),
             'role' => 'dosen',
             'status' => 'active',
             'dosen_id' => $dosen->id,
@@ -95,7 +97,7 @@ class DosenController extends Controller
      */
     public function show($id)
     {
-        $dosen = Dosen::with(['pengajarans', 'risets', 'pkms', 'bimbingans'])->findOrFail($id);
+        $dosen = Dosen::with(['pengajarans', 'risets', 'pkms', 'bimbingans', 'pelatihans', 'asosiasis', 'sertifikasis'])->findOrFail($id);
 
         $stats = [
             'total_pengajaran' => $dosen->pengajarans->count(),
@@ -103,6 +105,9 @@ class DosenController extends Controller
             'total_riset' => $dosen->risets->count(),
             'total_pkm' => $dosen->pkms->count(),
             'total_bimbingan' => $dosen->bimbingans->count(),
+            'total_pelatihan' => $dosen->pelatihans->count(),
+            'total_asosiasi' => $dosen->asosiasis->count(),
+            'total_sertifikasi' => $dosen->sertifikasis->count()
         ];
 
         return view('admin.dosens.show', compact('dosen', 'stats'));
@@ -183,5 +188,89 @@ class DosenController extends Controller
     {
         // Will be implemented later
         return redirect()->back()->with('info', 'Fitur export sedang dalam pengembangan');
+    }
+
+    public function downloadTemplate()
+    {
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="template_import_dosen.csv"',
+        ];
+
+        $columns = [
+            'nidn',
+            'nik',
+            'nama',
+            'email',
+            'status',
+            'pendidikan_terakhir',
+            'jabatan_fungsional',
+            'inpassing',
+            'kepangkatan',
+            'bidang_keahlian',
+        ];
+
+        $sampleData = [
+            '0010018601',
+            '3273010010018601',
+            'Dr. Ahmad Rizal, S.Psi., M.Psi., Psikolog',
+            'ahmad.rizal@unisba.ac.id',
+            'tetap',
+            'S3',
+            'Lektor Kepala',
+            'IV/d',
+            'Pembina Utama Muda',
+            'Psikologi Klinis',
+        ];
+
+        $callback = function () use ($columns, $sampleData) {
+            $file = fopen('php://output', 'w');
+
+            // Header
+            fputcsv($file, $columns);
+
+            // Sample row
+            fputcsv($file, $sampleData);
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    /**
+     * Import data dosen dari Excel/CSV
+     */
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:xlsx,xls,csv|max:5120',
+        ]);
+
+        try {
+            $import = new DosenImport();
+            Excel::import($import, $request->file('file'));
+
+            $successCount = $import->getSuccessCount();
+            $failCount = $import->getFailCount();
+            $errors = $import->getErrors();
+
+            $message = "Berhasil import {$successCount} data dosen.";
+            if ($failCount > 0) {
+                $message .= " Gagal: {$failCount} data.";
+            }
+
+            if (!empty($errors)) {
+                return redirect()->route('admin.dosens.index')
+                    ->with('success', $message)
+                    ->with('import_errors', $errors);
+            }
+
+            return redirect()->route('admin.dosens.index')
+                ->with('success', $message);
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Gagal import: ' . $e->getMessage());
+        }
     }
 }

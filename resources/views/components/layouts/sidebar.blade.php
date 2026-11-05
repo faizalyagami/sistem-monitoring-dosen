@@ -64,8 +64,8 @@
                     <i class="bi bi-file-text"></i> Laporan Kinerja
                 </a>
             </li>
-            <li class="{{ request()->routeIs('admin.evaluasi-kinerja.*') ? 'active' : '' }}">
-                <a href="{{ route('admin.evaluasi-kinerja.index') }}">
+            <li class="{{ request()->routeIs('admin.evaluasi.*') ? 'active' : '' }}">
+                <a href="{{ route('admin.evaluasi.index') }}">
                     <i class="bi bi-clipboard-check"></i> Evaluasi Kinerja
                 </a>
             </li>
