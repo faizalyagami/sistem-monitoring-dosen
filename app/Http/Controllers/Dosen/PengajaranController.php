@@ -15,8 +15,20 @@ class PengajaranController extends Controller
         $dosen = Auth::user()->dosen;
         $query = Pengajaran::where('dosen_id', $dosen->id)->with('academicPeriod');
 
-        if ($request->filled('academic_period_id')) $query->where('academic_period_id', $request->academic_period_id);
-        if ($request->filled('semester')) $query->where('semester', $request->semester);
+        $periodId = session('selected_period_id');
+        if ($periodId && $periodId !== 'all') {
+            $query->where('academic_period_id', $periodId);
+        } elseif (!$periodId) {
+            // Default ke periode aktif jika session kosong
+            $activePeriod = AcademicPeriod::where('is_active', true)->first();
+            if ($activePeriod) {
+                $query->where('academic_period_id', $activePeriod->id);
+            }
+        }
+
+        if ($request->filled('academic_period_id')) {
+            $query->where('academic_period_id', $request->academic_period_id);
+        }
 
         $pengajarans = $query->orderBy('tahun_akademik', 'desc')->paginate(10);
         $periods = AcademicPeriod::orderBy('tahun_awal', 'desc')->get();

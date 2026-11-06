@@ -3,6 +3,9 @@
     <div class="container-fluid px-4">
         <h1 class="h3 mb-4">Data Sertifikasi</h1>
         <a href="{{ route('admin.sertifikasi.create') }}" class="btn btn-primary mb-3">Tambah Sertifikasi</a>
+
+        @include('components.period-info')
+
         <div class="card shadow-sm">
             <div class="card-body p-0">
                 <table class="table table-hover mb-0">

@@ -27,6 +27,8 @@
             </div>
         </div>
 
+        @include('components.period-info')
+
         @if (session('import_errors'))
             <div class="alert alert-warning alert-dismissible fade show">
                 <h6 class="fw-bold"><i class="bi bi-exclamation-triangle"></i> Beberapa data gagal diimport:</h6>

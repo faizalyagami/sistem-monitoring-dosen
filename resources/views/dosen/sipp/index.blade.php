@@ -17,6 +17,8 @@
             </a>
         </div>
 
+        @include('components.period-info')
+
         <!-- Data Table -->
         <div class="card shadow-sm">
             <div class="card-body p-0">

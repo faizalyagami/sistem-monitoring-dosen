@@ -8,6 +8,8 @@
                 Pelatihan</a>
         </div>
 
+        @include('components.period-info')
+
         <div class="card shadow-sm mb-4">
             <div class="card-body">
                 <form method="GET" action="{{ route('admin.pelatihan.index') }}" class="row g-3">

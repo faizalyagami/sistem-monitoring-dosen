@@ -536,6 +536,158 @@
                 font-size: 1.4rem;
             }
         }
+
+        .period-dropdown .period-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 15px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            color: #1e293b;
+            font-size: 0.88rem;
+            font-weight: 600;
+            white-space: nowrap;
+            box-shadow: 0 3px 12px rgba(15, 23, 42, 0.06);
+            transition: all 0.2s ease;
+        }
+
+        .period-dropdown .period-toggle:hover,
+        .period-dropdown .period-toggle:focus {
+            background: #f8faff;
+            border-color: #4361ee;
+            box-shadow: 0 4px 14px rgba(67, 97, 238, 0.12);
+        }
+
+        .period-dropdown .period-toggle::after {
+            margin-left: 3px;
+        }
+
+        .period-dropdown .dropdown-menu {
+            width: 300px;
+            min-width: 300px;
+            max-width: calc(100vw - 24px);
+            padding: 10px;
+            margin-top: 10px !important;
+            border: 1px solid #edf0f5;
+            border-radius: 16px;
+            background: #ffffff;
+            box-shadow: 0 12px 35px rgba(15, 23, 42, 0.12);
+
+            max-height: min(70vh, 480px);
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .period-dropdown .dropdown-menu::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .period-dropdown .dropdown-menu::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .period-dropdown .dropdown-menu::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+
+        .period-dropdown .dropdown-header {
+            padding: 8px 12px 12px;
+            color: #64748b;
+            font-size: 0.76rem;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+
+        .period-dropdown .dropdown-divider {
+            margin: 7px 2px;
+            border-color: #e9edf3;
+            opacity: 1;
+        }
+
+        .period-dropdown li form {
+            margin: 0;
+            width: 100%;
+        }
+
+        .period-dropdown .dropdown-item-custom {
+            width: 100%;
+            min-height: 42px;
+            padding: 10px 12px;
+
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 11px;
+
+            border: none;
+            border-radius: 9px;
+            background: transparent;
+
+            color: #334155;
+            font-family: inherit;
+            font-size: 0.84rem;
+            font-weight: 500;
+            line-height: 1.4;
+            text-align: left;
+            white-space: normal;
+
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .period-dropdown .dropdown-item-custom i {
+            flex: 0 0 20px;
+            width: 20px;
+            font-size: 1rem;
+            color: #64748b;
+            text-align: center;
+        }
+
+        .period-dropdown .dropdown-item-custom:hover {
+            background: #f1f5ff;
+            color: #4361ee;
+            transform: none;
+        }
+
+        .period-dropdown .dropdown-item-custom:hover i {
+            color: #4361ee;
+        }
+
+        .period-dropdown .dropdown-item-custom.active {
+            background: #eef2ff;
+            color: #4361ee !important;
+            font-weight: 700;
+        }
+
+        .period-dropdown .dropdown-item-custom.active i {
+            color: #4361ee;
+        }
+
+        /* Indikator periode terpilih */
+        .period-dropdown .dropdown-item-custom.active::after {
+            content: "\F26E";
+            font-family: "bootstrap-icons";
+            margin-left: auto;
+            color: #4361ee;
+            font-size: 1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 767px) {
+            .period-dropdown .dropdown-menu {
+                width: 280px;
+                min-width: 280px;
+                max-height: 65vh;
+            }
+
+            .period-dropdown .period-toggle {
+                font-size: 0.8rem;
+                padding: 8px 10px;
+            }
+        }
     </style>
 
     @stack('styles')
@@ -556,90 +708,173 @@
                         <span class="d-none d-md-inline">Menu</span>
                     </button>
                 </div>
-
                 <div class="d-flex align-items-center gap-3">
-                    <!-- Search -->
-                    <div class="search-wrapper d-none d-lg-block">
-                        <i class="bi bi-search"></i>
-                        <input type="text" class="search-input" placeholder="Cari sesuatu...">
-                    </div>
+                    <!-- FILTER PERIODE -->
+                    <div class="dropdown period-dropdown d-none d-md-block me-2">
 
-                    <!-- Notification -->
-                    <div class="dropdown">
-                        <button class="notification-btn" data-bs-toggle="dropdown">
-                            <i class="bi bi-bell fs-5"></i>
-                            <span class="notification-badge">3</span>
+                        @php
+                            $selectedPeriodId = session('selected_period_id');
+
+                            if ($selectedPeriodId === 'all') {
+                                $periodLabel = 'Semua Periode';
+                            } elseif ($selectedPeriodId) {
+                                $periodLabel =
+                                    \App\Models\AcademicPeriod::find($selectedPeriodId)?->nama_periode ??
+                                    'Pilih Periode';
+                            } else {
+                                $activeP = \App\Models\AcademicPeriod::where('is_active', true)->first();
+                                $periodLabel = $activeP ? $activeP->nama_periode : 'Pilih Periode';
+                            }
+                        @endphp
+
+                        <!-- Dropdown Trigger -->
+                        <button class="btn dropdown-toggle period-toggle" type="button" data-bs-toggle="dropdown"
+                            data-bs-auto-close="true" aria-expanded="false">
+
+                            <i class="bi bi-calendar-event text-primary"></i>
+
+                            <span>{{ $periodLabel }}</span>
                         </button>
-                        <div class="dropdown-menu dropdown-menu-end dropdown-custom">
-                            <div class="px-3 py-2 border-bottom">
-                                <h6 class="mb-0 fw-bold">Notifikasi</h6>
-                                <small class="text-muted">3 notifikasi baru</small>
-                            </div>
-                            <div class="dropdown-divider"></div>
-                            <a href="#" class="dropdown-item-custom">
-                                <i class="bi bi-calendar-check text-primary"></i>
-                                <div>
-                                    <div class="small fw-bold">Periode baru dimulai</div>
-                                    <div class="small text-muted">2 jam lalu</div>
-                                </div>
-                            </a>
-                            <a href="#" class="dropdown-item-custom">
-                                <i class="bi bi-person-plus text-success"></i>
-                                <div>
-                                    <div class="small fw-bold">Dosen baru ditambahkan</div>
-                                    <div class="small text-muted">5 jam lalu</div>
-                                </div>
-                            </a>
-                            <a href="#" class="dropdown-item-custom">
-                                <i class="bi bi-file-text text-warning"></i>
-                                <div>
-                                    <div class="small fw-bold">Laporan bulanan siap</div>
-                                    <div class="small text-muted">Kemarin</div>
-                                </div>
-                            </a>
-                            <div class="dropdown-divider"></div>
-                            <a href="#" class="dropdown-item-custom justify-content-center">
-                                <small class="text-primary">Lihat semua</small>
-                            </a>
-                        </div>
-                    </div>
 
-                    <!-- User Menu -->
-                    <div class="dropdown">
-                        <div class="user-menu" data-bs-toggle="dropdown">
-                            <div class="user-avatar">
-                                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                            </div>
-                            <div class="user-info">
-                                <div class="user-name">{{ Auth::user()->name }}</div>
-                                <div class="user-role">{{ ucfirst(Auth::user()->role) }}</div>
-                            </div>
-                            <i class="bi bi-chevron-down text-muted"></i>
+                        <!-- Dropdown Menu -->
+                        <ul class="dropdown-menu dropdown-menu-end">
+
+                            <li>
+                                <h6 class="dropdown-header">
+                                    <i class="bi bi-funnel me-1"></i>
+                                    Filter Periode Akademik
+                                </h6>
+                            </li>
+
+                            <!-- Semua Periode -->
+                            <li>
+                                <form action="{{ route('set-period') }}" method="POST">
+                                    @csrf
+
+                                    <input type="hidden" name="period_id" value="all">
+
+                                    <button type="submit"
+                                        class="dropdown-item-custom {{ $selectedPeriodId === 'all' ? 'active' : '' }}">
+
+                                        <i class="bi bi-calendar-range"></i>
+                                        <span>Semua Periode</span>
+
+                                    </button>
+                                </form>
+                            </li>
+
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+
+                            <!-- Daftar Periode Akademik -->
+                            @foreach (\App\Models\AcademicPeriod::orderBy('tahun_awal', 'desc')->get() as $p)
+                                <li>
+                                    <form action="{{ route('set-period') }}" method="POST">
+                                        @csrf
+
+                                        <input type="hidden" name="period_id" value="{{ $p->id }}">
+
+                                        <button type="submit"
+                                            class="dropdown-item-custom {{ $selectedPeriodId == $p->id ? 'active' : '' }}">
+
+                                            <i class="bi bi-calendar-check"></i>
+
+                                            <span>{{ $p->nama_periode }}</span>
+
+                                        </button>
+                                    </form>
+                                </li>
+                            @endforeach
+
+                        </ul>
+                    </div>
+                    <!-- END FILTER PERIODE -->
+
+                    <!-- Search -->
+                    <div class="d-flex align-items-center gap-3">
+                        <!-- Search -->
+                        <div class="search-wrapper d-none d-lg-block">
+                            <i class="bi bi-search"></i>
+                            <input type="text" class="search-input" placeholder="Cari sesuatu...">
                         </div>
-                        <div class="dropdown-menu dropdown-menu-end dropdown-custom">
-                            <a class="dropdown-item-custom" href="#">
-                                <i class="bi bi-person"></i>
-                                <span>Profile Saya</span>
-                            </a>
-                            <a class="dropdown-item-custom" href="#">
-                                <i class="bi bi-gear"></i>
-                                <span>Pengaturan</span>
-                            </a>
-                            <a class="dropdown-item-custom" href="#">
-                                <i class="bi bi-question-circle"></i>
-                                <span>Bantuan</span>
-                            </a>
-                            <div class="dropdown-divider"></div>
-                            <form action="{{ route('logout') }}" method="POST">
-                                @csrf
-                                <button type="submit" class="dropdown-item-custom w-100 text-start text-danger">
-                                    <i class="bi bi-box-arrow-right"></i>
-                                    <span>Logout</span>
-                                </button>
-                            </form>
+
+                        <!-- Notification -->
+                        <div class="dropdown">
+                            <button class="notification-btn" data-bs-toggle="dropdown">
+                                <i class="bi bi-bell fs-5"></i>
+                                <span class="notification-badge">3</span>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end dropdown-custom">
+                                <div class="px-3 py-2 border-bottom">
+                                    <h6 class="mb-0 fw-bold">Notifikasi</h6>
+                                    <small class="text-muted">3 notifikasi baru</small>
+                                </div>
+                                <div class="dropdown-divider"></div>
+                                <a href="#" class="dropdown-item-custom">
+                                    <i class="bi bi-calendar-check text-primary"></i>
+                                    <div>
+                                        <div class="small fw-bold">Periode baru dimulai</div>
+                                        <div class="small text-muted">2 jam lalu</div>
+                                    </div>
+                                </a>
+                                <a href="#" class="dropdown-item-custom">
+                                    <i class="bi bi-person-plus text-success"></i>
+                                    <div>
+                                        <div class="small fw-bold">Dosen baru ditambahkan</div>
+                                        <div class="small text-muted">5 jam lalu</div>
+                                    </div>
+                                </a>
+                                <a href="#" class="dropdown-item-custom">
+                                    <i class="bi bi-file-text text-warning"></i>
+                                    <div>
+                                        <div class="small fw-bold">Laporan bulanan siap</div>
+                                        <div class="small text-muted">Kemarin</div>
+                                    </div>
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a href="#" class="dropdown-item-custom justify-content-center">
+                                    <small class="text-primary">Lihat semua</small>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- User Menu -->
+                        <div class="dropdown">
+                            <div class="user-menu" data-bs-toggle="dropdown">
+                                <div class="user-avatar">
+                                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                                </div>
+                                <div class="user-info">
+                                    <div class="user-name">{{ Auth::user()->name }}</div>
+                                    <div class="user-role">{{ ucfirst(Auth::user()->role) }}</div>
+                                </div>
+                                <i class="bi bi-chevron-down text-muted"></i>
+                            </div>
+                            <div class="dropdown-menu dropdown-menu-end dropdown-custom">
+                                <a class="dropdown-item-custom" href="#">
+                                    <i class="bi bi-person"></i>
+                                    <span>Profile Saya</span>
+                                </a>
+                                <a class="dropdown-item-custom" href="#">
+                                    <i class="bi bi-gear"></i>
+                                    <span>Pengaturan</span>
+                                </a>
+                                <a class="dropdown-item-custom" href="#">
+                                    <i class="bi bi-question-circle"></i>
+                                    <span>Bantuan</span>
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <form action="{{ route('logout') }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="dropdown-item-custom w-100 text-start text-danger">
+                                        <i class="bi bi-box-arrow-right"></i>
+                                        <span>Logout</span>
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
-                </div>
             </nav>
 
             <!-- Main Content -->

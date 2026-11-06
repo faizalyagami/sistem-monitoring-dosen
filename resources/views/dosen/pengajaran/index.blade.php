@@ -14,6 +14,14 @@
             </a>
         </div>
 
+        @include('components.period-info')
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <!-- form filter di sini -->
+            </div>
+        </div>
+
         <div class="card shadow-sm">
             <div class="card-body p-0">
                 <div class="table-responsive">

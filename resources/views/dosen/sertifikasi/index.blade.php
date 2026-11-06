@@ -7,6 +7,9 @@
             <a href="{{ route('dosen.sertifikasi.create') }}" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Tambah
                 Sertifikasi</a>
         </div>
+
+        @include('components.period-info')
+
         <div class="card shadow-sm">
             <div class="card-body p-0">
                 <table class="table table-hover mb-0">

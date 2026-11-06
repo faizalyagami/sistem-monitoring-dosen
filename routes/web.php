@@ -57,6 +57,14 @@ Auth::routes();
 Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::post('/set-period', function (Illuminate\Http\Request $request) {
+        // Izinkan memilih 'all' atau ID periode yang valid
+        if ($request->period_id !== 'all') {
+            $request->validate(['period_id' => 'required|exists:academic_periods,id']);
+        }
+        session(['selected_period_id' => $request->period_id]);
+        return redirect()->back()->with('success', 'Filter periode berhasil diterapkan.');
+    })->name('set-period')->middleware('auth');
 });
 
 // ==========================================
