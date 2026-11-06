@@ -10,15 +10,16 @@
     <div class="menu-title">MAIN NAVIGATION</div>
 
     <ul class="components">
-        <!-- Dashboard -->
-        <li class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-            <a href="{{ route('admin.dashboard') }}">
+        <!-- Dashboard Dinamis -->
+        <li class="{{ request()->routeIs('admin.dashboard') || request()->routeIs('dosen.dashboard') ? 'active' : '' }}">
+            <a href="{{ Auth::user()->isAdmin() ? route('admin.dashboard') : route('dosen.dashboard') }}">
                 <i class="bi bi-speedometer2"></i> Dashboard
             </a>
         </li>
     </ul>
 
     @if (Auth::user()->isAdmin())
+        <!-- ================= MENU ADMIN ================= -->
         <div class="menu-title">DATA MASTER</div>
         <ul class="components">
             <li class="{{ request()->routeIs('admin.dosens.*') ? 'active' : '' }}">
@@ -57,6 +58,35 @@
             </li>
         </ul>
 
+        <div class="menu-title">PENGEMBANGAN PROFESI</div>
+        <ul class="components">
+            <li class="{{ request()->routeIs('admin.asosiasi.*') ? 'active' : '' }}">
+                <a href="{{ route('admin.asosiasi.index') }}">
+                    <i class="bi bi-diagram-3"></i> Asosiasi Profesi
+                </a>
+            </li>
+            <li class="{{ request()->routeIs('admin.pelatihan.*') ? 'active' : '' }}">
+                <a href="{{ route('admin.pelatihan.index') }}">
+                    <i class="bi bi-easel"></i> Pelatihan
+                </a>
+            </li>
+            <li class="{{ request()->routeIs('admin.sipp.*') ? 'active' : '' }}">
+                <a href="{{ route('admin.sipp.index') }}">
+                    <i class="bi bi-file-earmark-medical"></i> SIPP
+                </a>
+            </li>
+            <li class="{{ request()->routeIs('admin.sertifikasi.*') ? 'active' : '' }}">
+                <a href="{{ route('admin.sertifikasi.index') }}">
+                    <i class="bi bi-patch-check"></i> Sertifikasi
+                </a>
+            </li>
+            <li class="{{ request()->routeIs('admin.surat-tugas.*') ? 'active' : '' }}">
+                <a href="{{ route('admin.surat-tugas.index') }}">
+                    <i class="bi bi-envelope-paper"></i> Surat Tugas
+                </a>
+            </li>
+        </ul>
+
         <div class="menu-title">LAPORAN & EVALUASI</div>
         <ul class="components">
             <li class="{{ request()->routeIs('admin.laporan.*') ? 'active' : '' }}">
@@ -78,6 +108,7 @@
     @endif
 
     @if (Auth::user()->isDosen())
+        <!-- ================= MENU DOSEN ================= -->
         <div class="menu-title">INPUT KINERJA</div>
         <ul class="components">
             <li class="{{ request()->routeIs('dosen.pengajaran.*') ? 'active' : '' }}">
@@ -102,11 +133,54 @@
             </li>
         </ul>
 
-        <div class="menu-title">LAPORAN</div>
+        <div class="menu-title">PENGEMBANGAN PROFESI</div>
+        <ul class="components">
+            <li class="{{ request()->routeIs('dosen.asosiasi.*') ? 'active' : '' }}">
+                <a href="{{ route('dosen.asosiasi.index') }}">
+                    <i class="bi bi-diagram-3"></i> Asosiasi Profesi
+                </a>
+            </li>
+            <li class="{{ request()->routeIs('dosen.pelatihan.*') ? 'active' : '' }}">
+                <a href="{{ route('dosen.pelatihan.index') }}">
+                    <i class="bi bi-easel"></i> Pelatihan
+                </a>
+            </li>
+            <li class="{{ request()->routeIs('dosen.sipp.*') ? 'active' : '' }}">
+                <a href="{{ route('dosen.sipp.index') }}">
+                    <i class="bi bi-file-earmark-medical"></i> SIPP
+                </a>
+            </li>
+            <li class="{{ request()->routeIs('dosen.sertifikasi.*') ? 'active' : '' }}">
+                <a href="{{ route('dosen.sertifikasi.index') }}">
+                    <i class="bi bi-patch-check"></i> Sertifikasi
+                </a>
+            </li>
+            <li class="{{ request()->routeIs('dosen.surat-tugas.*') ? 'active' : '' }}">
+                <a href="{{ route('dosen.surat-tugas.index') }}">
+                    <i class="bi bi-envelope-paper"></i> Surat Tugas
+                </a>
+            </li>
+        </ul>
+
+        <div class="menu-title">LAPORAN & EVALUASI</div>
         <ul class="components">
             <li class="{{ request()->routeIs('dosen.laporan.*') ? 'active' : '' }}">
                 <a href="{{ route('dosen.laporan.index') }}">
                     <i class="bi bi-file-text"></i> Laporan Saya
+                </a>
+            </li>
+            <li class="{{ request()->routeIs('dosen.evaluasi-kinerja.*') ? 'active' : '' }}">
+                <a href="{{ route('dosen.evaluasi-kinerja.index') }}">
+                    <i class="bi bi-clipboard-check"></i> Evaluasi Kinerja
+                </a>
+            </li>
+        </ul>
+
+        <div class="menu-title">AKUN</div>
+        <ul class="components">
+            <li class="{{ request()->routeIs('dosen.profile') ? 'active' : '' }}">
+                <a href="{{ route('dosen.profile') }}">
+                    <i class="bi bi-person-circle"></i> Profile Saya
                 </a>
             </li>
         </ul>

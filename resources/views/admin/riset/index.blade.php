@@ -22,6 +22,8 @@
             </div>
         </div>
 
+        @include('components.period-info')
+
         <!-- Filter Card -->
         <div class="card shadow-sm mb-4">
             <div class="card-body">

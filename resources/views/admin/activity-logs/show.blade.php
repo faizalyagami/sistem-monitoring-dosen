@@ -1,63 +1,71 @@
-<x-layouts.app title="Detail Activity Log">
-    <div class="container-fluid">
+{{-- resources/views/admin/activity-logs/show.blade.php --}}
+@extends('components.layouts.app')
+
+@section('title', 'Detail Activity Log')
+
+@section('content')
+    <div class="container-fluid px-4">
         <div class="d-flex align-items-center mb-4">
             <a href="{{ route('admin.activity-logs.index') }}" class="btn btn-outline-secondary me-3">
                 <i class="bi bi-arrow-left"></i>
             </a>
-            <h2 class="page-title mb-0">
-                <i class="bi bi-info-circle me-2"></i> Detail Activity Log
-            </h2>
+            <div>
+                <h1 class="h3 mb-0 text-gray-800">
+                    <i class="bi bi-info-circle"></i> Detail Activity Log
+                </h1>
+                <p class="text-muted mb-0">Informasi lengkap mengenai aktivitas yang tercatat</p>
+            </div>
         </div>
 
         <div class="row">
             <div class="col-md-8">
                 <div class="card shadow-sm border-0 mb-4">
-                    <div class="card-header bg-white">
-                        <h5 class="mb-0">Informasi Aktivitas</h5>
+                    <div class="card-header bg-white py-3">
+                        <h5 class="mb-0 fw-bold">Informasi Aktivitas</h5>
                     </div>
                     <div class="card-body">
                         <table class="table table-bordered">
                             <tr>
-                                <th width="200">Waktu</th>
-                                <td>{{ $activityLog->created_at->format('d F Y H:i:s') }}</td>
+                                <th width="200" class="bg-light">Waktu</th>
+                                <td>{{ $log->created_at->format('d F Y H:i:s') }} ({{ $log->created_at->diffForHumans() }})
+                                </td>
                             </tr>
                             <tr>
-                                <th>User</th>
+                                <th class="bg-light">User</th>
                                 <td>
-                                    @if ($activityLog->user)
-                                        {{ $activityLog->user->name }} ({{ $activityLog->user->role }})
+                                    @if ($log->user)
+                                        {{ $log->user->name }} ({{ ucfirst($log->user->role) }})
                                     @else
                                         System
                                     @endif
                                 </td>
                             </tr>
                             <tr>
-                                <th>Module</th>
-                                <td>{!! $activityLog->module_badge !!}</td>
+                                <th class="bg-light">Modul</th>
+                                <td><span class="badge bg-secondary">{{ ucfirst($log->module) }}</span></td>
                             </tr>
                             <tr>
-                                <th>Action</th>
-                                <td>{!! $activityLog->action_badge !!}</td>
+                                <th class="bg-light">Aksi</th>
+                                <td>{!! $log->action_badge !!}</td>
                             </tr>
                             <tr>
-                                <th>Deskripsi</th>
-                                <td>{{ $activityLog->description }}</td>
+                                <th class="bg-light">Deskripsi</th>
+                                <td>{{ $log->description }}</td>
                             </tr>
                             <tr>
-                                <th>IP Address</th>
-                                <td><code>{{ $activityLog->ip_address }}</code></td>
+                                <th class="bg-light">IP Address</th>
+                                <td><code>{{ $log->ip_address }}</code></td>
                             </tr>
                             <tr>
-                                <th>User Agent</th>
-                                <td><small>{{ $activityLog->user_agent }}</small></td>
+                                <th class="bg-light">User Agent</th>
+                                <td><small class="text-muted">{{ $log->user_agent }}</small></td>
                             </tr>
                             <tr>
-                                <th>URL</th>
-                                <td><code>{{ $activityLog->url }}</code></td>
-                            </tr>
-                            <tr>
-                                <th>Method</th>
-                                <td>{{ $activityLog->method }}</td>
+                                <th class="bg-light">URL / Method</th>
+                                <td>
+                                    <code>{{ $log->method }}</code>
+                                    <a href="{{ $log->url }}" target="_blank">{{ $log->url }}</a>
+                                </td>
                             </tr>
                         </table>
                     </div>
@@ -66,30 +74,35 @@
 
             <div class="col-md-4">
                 <div class="card shadow-sm border-0 mb-4">
-                    <div class="card-header bg-white">
-                        <h5 class="mb-0">Data Perubahan</h5>
+                    <div class="card-header bg-white py-3">
+                        <h5 class="mb-0 fw-bold">Data Perubahan</h5>
                     </div>
                     <div class="card-body">
-                        @if ($activityLog->old_data)
-                            <h6>Data Lama:</h6>
-                            <pre class="bg-light p-2 rounded small">{{ json_encode($activityLog->old_data, JSON_PRETTY_PRINT) }}</pre>
-                        @endif
+                        @if ($log->old_data || $log->new_data || $log->request_data)
 
-                        @if ($activityLog->new_data)
-                            <h6 class="mt-3">Data Baru:</h6>
-                            <pre class="bg-light p-2 rounded small">{{ json_encode($activityLog->new_data, JSON_PRETTY_PRINT) }}</pre>
-                        @endif
+                            @if ($log->old_data)
+                                <h6 class="fw-bold text-danger">Data Lama:</h6>
+                                <pre class="bg-light p-2 rounded small text-wrap" style="max-height: 200px; overflow-y: auto;">{{ json_encode($log->old_data, JSON_PRETTY_PRINT) }}</pre>
+                            @endif
 
-                        @if ($activityLog->request_data && !$activityLog->old_data && !$activityLog->new_data)
-                            <pre class="bg-light p-2 rounded small">{{ json_encode($activityLog->request_data, JSON_PRETTY_PRINT) }}</pre>
-                        @endif
+                            @if ($log->new_data)
+                                <h6 class="fw-bold text-success mt-3">Data Baru:</h6>
+                                <pre class="bg-light p-2 rounded small text-wrap" style="max-height: 200px; overflow-y: auto;">{{ json_encode($log->new_data, JSON_PRETTY_PRINT) }}</pre>
+                            @endif
 
-                        @if (!$activityLog->old_data && !$activityLog->new_data && !$activityLog->request_data)
-                            <p class="text-muted text-center">Tidak ada data perubahan</p>
+                            @if ($log->request_data && !$log->old_data && !$log->new_data)
+                                <h6 class="fw-bold text-primary">Request Data:</h6>
+                                <pre class="bg-light p-2 rounded small text-wrap" style="max-height: 200px; overflow-y: auto;">{{ json_encode($log->request_data, JSON_PRETTY_PRINT) }}</pre>
+                            @endif
+                        @else
+                            <div class="text-center py-4 text-muted">
+                                <i class="bi bi-database-slash fs-1 mb-2"></i>
+                                <p class="mb-0">Tidak ada data perubahan yang dicatat.</p>
+                            </div>
                         @endif
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</x-layouts.app>
+@endsection

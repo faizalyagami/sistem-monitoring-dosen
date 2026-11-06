@@ -22,6 +22,8 @@
             </div>
         </div>
 
+        @include('components.period-info')
+
         <!-- Info Cards -->
         <div class="row g-3 mb-4">
             <div class="col-md-3">

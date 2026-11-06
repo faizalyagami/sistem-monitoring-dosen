@@ -402,11 +402,15 @@
                     @csrf
 
                     <div class="form-group">
-                        <label>Email Address</label>
+                        <label>Username: NIK/Email</label>
                         <div class="input-group-custom">
                             <i class="bi bi-envelope"></i>
-                            <input type="email" name="email" value="{{ old('email') }}"
-                                placeholder="Enter your email" required autofocus>
+                            <input id="nik" type="text" class="form-control @error('nik') is-invalid @enderror"
+                                name="nik" value="{{ old('nik') }}" required autofocus
+                                placeholder="Masukkan NIK atau Email">
+                            @error('nik')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
 
@@ -414,9 +418,12 @@
                         <label>Password</label>
                         <div class="input-group-custom">
                             <i class="bi bi-lock"></i>
-                            <input type="password" name="password" id="password" placeholder="Enter your password"
-                                required>
-                            <i class="bi bi-eye-slash toggle-password" id="togglePassword"></i>
+                            <input id="password" type="password"
+                                class="form-control @error('password') is-invalid @enderror" name="password" required
+                                placeholder="Masukkan Password">
+                            @error('password')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
 
