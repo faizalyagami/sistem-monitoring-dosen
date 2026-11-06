@@ -15,18 +15,18 @@ class DatabaseSeeder extends Seeder
             AcademicPeriodSeeder::class,
             // DosenSeeder::class,
             UserSeeder::class,
-            PengajaranSeeder::class,
-            RisetSeeder::class,
-            PkmSeeder::class,
-            BimbinganSeeder::class,
+            // PengajaranSeeder::class,
+            // RisetSeeder::class,
+            // PkmSeeder::class,
+            // BimbinganSeeder::class,
         ]);
 
         $this->command->info('Semua seeder berhasil dijalankan!');
-        $this->command->info('Akun login:');
-        $this->command->info('Super Admin: superadmin@unisba.ac.id / password123');
-        $this->command->info('Admin: admin@unisba.ac.id / password123');
-        $this->command->info('Operator: operator@unisba.ac.id / password123');
-        $this->command->info('Viewer: viewer@unisba.ac.id / password123');
+        // $this->command->info('Akun login:');
+        // $this->command->info('Super Admin: superadmin@unisba.ac.id / password123');
+        // $this->command->info('Admin: admin@unisba.ac.id / password123');
+        // $this->command->info('Operator: operator@unisba.ac.id / password123');
+        // $this->command->info('Viewer: viewer@unisba.ac.id / password123');
         // $this->command->info('Dosen: email sesuai data dosen / password123');
     }
 }
